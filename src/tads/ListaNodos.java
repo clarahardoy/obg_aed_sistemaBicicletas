@@ -1,16 +1,16 @@
 
 package tads;
 
-public class ListaNodos<T extends Comparable> implements IListaSimple<T> {
+public class ListaNodos<T extends Comparable<T>> implements IListaSimple<T> {
     
     private Nodo<T> cabeza; //referencia al primer nodo
     private Nodo<T> fin; //final de la lista "cola"
-    private int cantidad; //numero de elementos
+    private int cantidadElementos; //numero de elementos
 
     public ListaNodos() {
         this.cabeza = null;
         this.fin = null;
-        this.cantidad = 0;
+        this.cantidadElementos = 0;
     }
 
     @Override
@@ -19,8 +19,8 @@ public class ListaNodos<T extends Comparable> implements IListaSimple<T> {
     }
 
     @Override
-    public int largo() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public int getCantidadElementos() {
+        return this.cantidadElementos;
     }
     
     @Override
@@ -40,10 +40,10 @@ public class ListaNodos<T extends Comparable> implements IListaSimple<T> {
         
         return existe;
     }
-
+    
     @Override
     public void agregarAlInicio(T dato) {
-        if(cantidad == 0){ // Es el primer nodo
+        if(cantidadElementos == 0){ // Es el primer nodo
             Nodo nuevo = new Nodo(dato);
             nuevo.setSiguiente(null);
             cabeza = nuevo;
@@ -53,7 +53,7 @@ public class ListaNodos<T extends Comparable> implements IListaSimple<T> {
             nuevo.setSiguiente(cabeza);
             cabeza = nuevo;
         }
-        cantidad++;
+        cantidadElementos++;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ListaNodos<T extends Comparable> implements IListaSimple<T> {
             Nodo nuevo = new Nodo(dato);
             fin.setSiguiente(nuevo);
             fin = fin.getSiguiente();
-            cantidad++;
+            cantidadElementos++;
         }
     }
 
@@ -77,4 +77,41 @@ public class ListaNodos<T extends Comparable> implements IListaSimple<T> {
     public void vaciar() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+    
+    @Override
+    public T obtenerElemento(T x) {
+        Nodo<T> aux = this.cabeza;
+        T ret = null;
+        boolean existe = false;
+
+        while (aux != null && !(existe)) {
+            if (aux.getDato().equals(x)) {
+                existe = true;
+                ret = (T) aux.getDato();
+            }
+            aux = aux.getSiguiente();
+        }
+        return ret;
+    }
+    
+    @Override
+     public T obtenerElementoPorIndice(int indice) {
+        if (indice < 0 || indice >= cantidadElementos) {
+            return null;
+        }
+
+        Nodo<T> aux = this.cabeza;
+        int actual = 0;
+
+        while (aux != null) {
+            if (actual == indice) {
+                return aux.getDato();
+            }
+            aux = aux.getSiguiente();
+            actual++;
+        }
+
+        return null;
+    }
+       
 }

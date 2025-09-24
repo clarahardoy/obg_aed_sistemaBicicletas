@@ -12,6 +12,8 @@ public class Sistema implements IObligatorio {
     private ListaNodos<Bicicleta> bicicletas;
     
     
+    // ------------- ADMINISTRACION DE BICICLETAS ------------------------
+    
     @Override
     public Retorno crearSistemaDeGestion() {
         estaciones = new ListaNodos();
@@ -91,18 +93,94 @@ public class Sistema implements IObligatorio {
     }
 
     @Override //HACER
+    // Solo si la bici no está alquilada. Pasa a estado “Mantenimiento” y queda fuera de servicio, siendo retirada y dejada en
+      // el depósito (en caso de no estarlo actualmente).
     public Retorno marcarEnMantenimiento(String codigo, String motivo) {
-        return Retorno.noImplementada();
+        
+        // validar parametros
+        if(codigo == null || codigo.isEmpty() || motivo == null || motivo.isEmpty())
+           return Retorno.error1();
+        
+        Bicicleta aBuscar = new Bicicleta(codigo, "");
+        Bicicleta bicicleta = this.bicicletas.obtenerElemento(aBuscar);
+        
+        if (bicicleta == null) {
+            return Retorno.error2(); 
+        }
+        
+        // validar que la bici no está alquilada
+        if ("ALQUILADA".equals(bicicleta.getEstado())) {
+            return Retorno.error3();
+        }
+        
+        if ("MANTENIMIENTO".equals(bicicleta.getEstado())) {
+            return Retorno.error4();
+        }
+        
+
+// si estaba en una estación, liberarla de esa estación
+        Estacion estacion = bicicleta.getEstacion();
+        if (estacion != null) {
+            estacion.getBicicletas().eliminar(bicicleta);
+            bicicleta.setEstacion(null);
+        }
+        
+        if (!"DEPOSITO".equals(bicicleta.getUbicacion())){
+             bicicleta.setUbicacion("DEPOSITO");
+        }
+        
+        bicicleta.setUsuario(null);
+        bicicleta.setEstado("MANTENIMIENTO");
+        bicicleta.setMotivoMantenimiento(motivo);
+       
+
+        return Retorno.ok();
     }
 
     @Override //HACER
     public Retorno repararBicicleta(String codigo) {
-        return Retorno.noImplementada();
+        
+        if(codigo == null || codigo.isEmpty()){
+            return Retorno.error1();
+        }
+        
+        // buscar bici
+        Bicicleta aBuscar = new Bicicleta(codigo, "");
+        Bicicleta bicicleta = this.bicicletas.obtenerElemento(aBuscar);
+        if (bicicleta == null){
+            return Retorno.error2();
+        }
+        
+        if (!"MANTENIMIENTO".equals(bicicleta.getEstado())){
+        return Retorno.error3();
+        }
+        
+        bicicleta.setUbicacion("DEPOSITO");
+        bicicleta.setEstado("DISPONIBLE");
+        return Retorno.ok();
     }
 
     @Override
     public Retorno eliminarEstacion(String nombre) {
-        return Retorno.noImplementada();
+        
+        if (nombre == null || nombre.isEmpty()){
+        return Retorno.error1();
+        }
+         
+        Estacion estacionABuscar = new Estacion(nombre, "", 0);
+        Estacion estacion = this.estaciones.obtenerElemento(estacionABuscar);
+        if (estacion == null) return Retorno.error2(); 
+        
+        // la letra dice: ni reservas/colas pendientes. preguntarle
+        // boolean tieneReservasPendientes = estacion.;
+        boolean tieneBicicletasAncladas = !estacion.getBicicletas().esVacia();
+        
+        if (tieneBicicletasAncladas) {
+            return Retorno.error3(); 
+        }
+        
+        this.estaciones.eliminar(estacion);
+        return Retorno.ok(); 
     }
 
     @Override
@@ -124,16 +202,50 @@ public class Sistema implements IObligatorio {
     public Retorno deshacerUltimosRetiros(int n) {
         return Retorno.noImplementada();
     }
+    
+    // ---------------------- LISTADOS Y REPORTES ----------------------
 
-    @Override //HACER
+    @Override //HACER 
     public Retorno obtenerUsuario(String cedula) {
-        return Retorno.noImplementada();
-    }
-
+        
+        if (cedula == null || cedula.isEmpty()){
+            return Retorno.error1(); 
+        }
+        
+        if (!this.validarCedula(cedula)){
+            return Retorno.error1(); 
+        }
+        
+        Usuario aBuscar = new Usuario(cedula, "");
+        Usuario usu = this.usuarios.obtenerElemento(aBuscar); 
+        if (usu == null){
+            return Retorno.error3(); 
+        }
+        
+        String datosUsuario = usu.getCedula() + "#" + usu.getNombre() + "#";
+        return Retorno.ok(datosUsuario);
+}
     @Override //HACER
+    //falta lo de que los usuarios estén ordenados por nobmre. será una precondicion? 
     public Retorno listarUsuarios() {
-        return Retorno.noImplementada();
+        String resultado = ""; 
+        int cantidadUsuarios = usuarios.getCantidadElementos();
+        
+         for (int i = 0; i < cantidadUsuarios; i++) {
+             Usuario usuarioActual = usuarios.obtenerElementoPorIndice(i);
+           
+            resultado += usuarioActual.getNombre() + "#" + usuarioActual.getCedula();
+
+            if (i < cantidadUsuarios - 1) {
+            resultado += "|";
+         }   
+        }
+        return Retorno.ok(resultado);
     }
+    
+
+    
+    
 
     @Override //HACER
     public Retorno listarBicisEnDeposito() {
@@ -173,6 +285,20 @@ public class Sistema implements IObligatorio {
     @Override
     public Retorno usuarioMayor() {
         return Retorno.noImplementada();
+    }
+    
+    public boolean validarCedula(String cedula) {
+        if (cedula.length() != 8) {
+            return false;
+        }
+
+        for (int i = 0; i < cedula.length(); i++) {
+            char c = cedula.charAt(i);
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

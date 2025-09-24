@@ -8,7 +8,7 @@ public interface IListaSimple<T> {
     boolean esVacia();
     
     //para validacion y repostes
-    int largo();
+    int getCantidadElementos();
     
     //para las altas
     void agregarAlInicio(T dato);
@@ -22,4 +22,8 @@ public interface IListaSimple<T> {
     
     //para validar si ya existe
     boolean existeElemento(T x);
+    
+    public T obtenerElemento(T x);
+    
+    public T obtenerElementoPorIndice(int indice);  
 }
