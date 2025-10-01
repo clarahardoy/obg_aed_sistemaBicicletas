@@ -9,6 +9,11 @@ public class Nodo<T extends Comparable> {
         this.dato = dato;
         this.siguiente = null;
     }
+    
+     public Nodo(T dato, Nodo<T> siguiente) {
+        this.dato = dato;
+        this.siguiente = siguiente;
+    }
 
     public T getDato() {
         return dato;

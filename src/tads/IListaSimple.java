@@ -26,4 +26,6 @@ public interface IListaSimple<T> {
     public T obtenerElemento(T x);
     
     public T obtenerElementoPorIndice(int indice);  
+    
+    void adicionarOrdenado(T x); 
 }

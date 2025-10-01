@@ -27,6 +27,9 @@ public class ListaNodos<T extends Comparable<T>> implements IListaSimple<T> {
     public boolean existeElemento(T dato) {
         boolean existe = false;
         
+       //if (esVacia()) {
+         //   throw new ListaVaciaException();
+        
         if(!esVacia()){
             Nodo<T> aux = cabeza;
             while(aux != null && !existe){
@@ -40,6 +43,7 @@ public class ListaNodos<T extends Comparable<T>> implements IListaSimple<T> {
         
         return existe;
     }
+    
     
     @Override
     public void agregarAlInicio(T dato) {
@@ -113,5 +117,26 @@ public class ListaNodos<T extends Comparable<T>> implements IListaSimple<T> {
 
         return null;
     }
+     
+      @Override
+    public void adicionarOrdenado(T elem) {
+        Nodo<T> nuevoNodo = new Nodo<T>(elem, null);
+
+        if (cabeza == null || cabeza.getDato().compareTo(elem) > 0) {
+            nuevoNodo.setSiguiente(cabeza);
+            cabeza = nuevoNodo;
+        } else {
+            Nodo<T> nodoActual = cabeza;
+            while (nodoActual.getSiguiente() != null && nodoActual.getSiguiente().getDato().compareTo(elem) < 0) {
+
+                nodoActual = nodoActual.getSiguiente();
+            }
+            nuevoNodo.setSiguiente(nodoActual.getSiguiente());
+            nodoActual.setSiguiente(nuevoNodo);
+        }
+
+        cantidadElementos++;
+    }
+    
        
 }
