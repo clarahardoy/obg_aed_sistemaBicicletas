@@ -2,20 +2,20 @@
 package dominio;
 
 import java.util.Objects;
-import tads.ListaNodos;
+import tads.ListaSE;
 
 
 public class Estacion implements Comparable<Estacion> {
     private  String nombre;
     private String barrio;
     private int capacidad;
-    public ListaNodos<Bicicleta> bicicletas;
+    public ListaSE<Bicicleta> bicicletas;
     
     public Estacion(String nombre, String barrio, int capacidad){
         this.nombre = nombre;
         this.barrio = barrio;
         this.capacidad = capacidad;
-        this.bicicletas = new ListaNodos<>();
+        this.bicicletas = new ListaSE<>();
     }
 
     public String getNombre() {
@@ -48,11 +48,11 @@ public class Estacion implements Comparable<Estacion> {
         return hash;
     }
     
-    public ListaNodos<Bicicleta> getBicicletas() {
+    public ListaSE<Bicicleta> getBicicletas() {
         return bicicletas;
     }
 
-    public void setBicicletas(ListaNodos<Bicicleta> bicicletas) {
+    public void setBicicletas(ListaSE<Bicicleta> bicicletas) {
         this.bicicletas = bicicletas;
     }
 

@@ -23,9 +23,10 @@ public class Nodo<T extends Comparable> {
         this.dato = dato;
     }
 
-    public Nodo getSiguiente() {
+    public Nodo<T> getSiguiente() {
         return siguiente;
     }
+    
 
     public void setSiguiente(Nodo siguiente) {
         this.siguiente = siguiente;

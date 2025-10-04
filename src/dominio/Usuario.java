@@ -58,4 +58,18 @@ public class Usuario implements Comparable<Usuario> {
         if (obj == null) return 1;                 
         return this.cedula.compareTo(obj.cedula);  
     }   
+    
+    public static boolean validarCedula(String cedula) {
+        if (cedula.length() != 8) {
+            return false;
+        }
+
+        for (int i = 0; i < cedula.length(); i++) {
+            char c = cedula.charAt(i);
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

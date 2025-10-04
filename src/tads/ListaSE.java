@@ -1,13 +1,13 @@
 
 package tads;
 
-public class ListaNodos<T extends Comparable<T>> implements IListaSimple<T> {
+public class ListaSE<T extends Comparable<T>> implements IListaSimple<T> {
     
     private Nodo<T> cabeza; //referencia al primer nodo
     private Nodo<T> fin; //final de la lista "cola"
     private int cantidadElementos; //numero de elementos
 
-    public ListaNodos() {
+    public ListaSE() {
         this.cabeza = null;
         this.fin = null;
         this.cantidadElementos = 0;
@@ -26,9 +26,6 @@ public class ListaNodos<T extends Comparable<T>> implements IListaSimple<T> {
     @Override
     public boolean existeElemento(T dato) {
         boolean existe = false;
-        
-       //if (esVacia()) {
-         //   throw new ListaVaciaException();
         
         if(!esVacia()){
             Nodo<T> aux = cabeza;
@@ -74,12 +71,34 @@ public class ListaNodos<T extends Comparable<T>> implements IListaSimple<T> {
 
     @Override
     public boolean eliminar(T dato) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (esVacia()) return false;
+
+        if (cabeza.getDato().equals(dato)) {
+            cabeza = cabeza.getSiguiente();
+            if (cabeza == null) fin = null;
+            cantidadElementos--;
+            return true;
+        }
+        Nodo<T> ant = cabeza;
+        Nodo<T> act = cabeza.getSiguiente();
+
+        while (act != null && !act.getDato().equals(dato)) {
+            ant = act;
+            act = act.getSiguiente();
+        }
+        if (act == null) return false;
+
+        ant.setSiguiente(act.getSiguiente());
+        if (act == fin) fin = ant;
+        cantidadElementos--;
+        return true;
     }
 
     @Override
     public void vaciar() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        cabeza = null;
+        fin = null;
+        cantidadElementos = 0;
     }
     
     @Override
@@ -120,7 +139,7 @@ public class ListaNodos<T extends Comparable<T>> implements IListaSimple<T> {
      
       @Override
     public void adicionarOrdenado(T elem) {
-        Nodo<T> nuevoNodo = new Nodo<T>(elem, null);
+        Nodo<T> nuevoNodo = new Nodo<>(elem, null);
 
         if (cabeza == null || cabeza.getDato().compareTo(elem) > 0) {
             nuevoNodo.setSiguiente(cabeza);
