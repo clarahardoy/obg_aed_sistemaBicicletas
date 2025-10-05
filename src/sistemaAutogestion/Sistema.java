@@ -268,48 +268,38 @@ public class Sistema implements IObligatorio {
     
     
 
-    @Override //SIN TERMINAR
+    @Override
     public Retorno listarBicisEnDeposito() {
-                return Retorno.noImplementada();
 
-//        if(this.bicicletas == null || this.bicicletas.esVacia())
-//            return Retorno.ok("");
-//        
-//        ListaSE<Bicicleta> enDeposito = new ListaSE<>();
-//        int totalBicis = this.bicicletas.getCantidadElementos();
-//        
-//        for(int i = 0; i < totalBicis; i ++){
-//            Bicicleta b = this.bicicletas.obtenerElementoPorIndice(i);
-//            if(b != null && b.getUbicacion() != null && "DEPOSITO".equalsIgnoreCase(b.getUbicacion())){
-//                enDeposito.agregarAlFinal(b);
-//            }
-//        }
-//        if(enDeposito.esVacia())
-//            return Retorno.ok("");
-//        
-//        Bicicleta B = enDeposito.obtenerElementoPorIndice(i);
-//    }
-    }
-
-    @Override //SIN TERMINAR
-    public Retorno informaciónMapa(String[][] mapa) {
-                return Retorno.noImplementada();
-//        if(mapa == null || mapa.length == 0){
-//            return Retorno.ok("0#ambas|no existe");
-//        }
-//        
-//        int filas = mapa.length;
-//        int columnas = 0;
-//        
-//        for(int i = 0; i < filas; i++){
-//            if(mapa[i] != null && mapa[i].length > columnas){
-//                columnas = mapa[i].length;
-//            }
-//        }
-//    }
+        if(this.bicicletas == null || this.bicicletas.esVacia())
+            return Retorno.ok("");
         
+        String resultado = "";
+        int cantidadBicis = this.bicicletas.getCantidadElementos();
+        
+        for(int i = 0; i< cantidadBicis; i++){
+            Bicicleta b = this.bicicletas.obtenerElementoPorIndice(i);
+            if(b != null){
+                String ubi = b.getUbicacion();
+                if(ubi != null && "DEPOSiTO".equalsIgnoreCase(ubi)){
+                    
+                    
+                    String item = b.getCodigo() + "#" + b.getTipo() + "#" + b.getEstado();
+                    
+                    if(resultado.isEmpty()) resultado = item;
+                    else resultado = resultado + "|" + item;
+                }
+            }
+        }
+        return Retorno.ok(resultado);
     }
 
+        @Override
+        public Retorno informaciónMapa(String[][] mapa) {
+
+                return Retorno.noImplementada();
+
+    }
 
     @Override
     public Retorno listarBicicletasDeEstacion(String nombreEstacion) {
