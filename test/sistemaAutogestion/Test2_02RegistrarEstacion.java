@@ -22,7 +22,7 @@ public class Test2_02RegistrarEstacion {
 
     @Test
     public void registrarEstacionError01() {
-        retorno = s.registrarEstacion("", "Centro", 5);
+        retorno = s.registrarEstacion("", "Centro", 5);//vacio
         assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
 
         retorno = s.registrarEstacion("Estacion01", "", 5);
@@ -57,5 +57,4 @@ public class Test2_02RegistrarEstacion {
         assertEquals(Retorno.Resultado.ERROR_3, retorno.getResultado());
 
     }
-
 }

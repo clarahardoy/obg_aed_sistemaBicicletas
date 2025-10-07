@@ -3,7 +3,6 @@ package dominio;
 
 import java.util.Objects;
 
-
 public class Usuario implements Comparable<Usuario> {
     private String cedula;
     private String nombre;

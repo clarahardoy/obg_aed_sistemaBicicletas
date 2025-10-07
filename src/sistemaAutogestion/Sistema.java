@@ -10,9 +10,6 @@ public class Sistema implements IObligatorio {
     private ListaSE<Estacion> estaciones;
     private ListaSE<Usuario> usuarios;
     private ListaSE<Bicicleta> bicicletas;
-    //private ListaSE<Bicicleta> deposito;
-
-    
     
     // ------------- ADMINISTRACION DE BICICLETAS ------------------------
     
@@ -21,7 +18,6 @@ public class Sistema implements IObligatorio {
         estaciones = new ListaSE();
         usuarios = new ListaSE();
         bicicletas = new ListaSE();
-        //deposito   = new ListaSE<>();
 
         return Retorno.ok();
     }
@@ -38,7 +34,8 @@ public class Sistema implements IObligatorio {
     @Override
     public Retorno registrarEstacion(String nombre, String barrio, int capacidad) {
         
-        if(nombre == null || nombre.isEmpty() || barrio == null || barrio.isEmpty())
+        if(nombre == null || nombre.trim().isEmpty() || barrio == null || barrio.trim().isEmpty())
+           
             return Retorno.error1();
         
         if(capacidad <= 0)
@@ -56,7 +53,7 @@ public class Sistema implements IObligatorio {
     @Override
     public Retorno registrarUsuario(String cedula, String nombre) {
         
-        if(cedula == null || cedula.isEmpty() || nombre == null || nombre.isEmpty())
+        if(cedula == null || cedula.trim().isEmpty() || nombre == null || nombre.trim().isEmpty())
             return Retorno.error1();
         
         if(!cedula.matches("\\d{8}"))//cedula debe ser exactamente de 8 digitos
@@ -74,7 +71,7 @@ public class Sistema implements IObligatorio {
     @Override
     public Retorno registrarBicicleta(String codigo, String tipo) {
         
-       if(codigo == null || codigo.isEmpty() || tipo == null || tipo.isEmpty())
+       if(codigo == null || codigo.trim().isEmpty() || tipo == null || tipo.trim().isEmpty())
            return Retorno.error1();
        
        if(codigo.length() != 6)
@@ -103,7 +100,7 @@ public class Sistema implements IObligatorio {
     public Retorno marcarEnMantenimiento(String codigo, String motivo) {
         
         // validar parametros
-        if(codigo == null || codigo.isEmpty() || motivo == null || motivo.isEmpty())
+        if(codigo == null || codigo.trim().isEmpty() || motivo == null || motivo.trim().isEmpty())
            return Retorno.error1();
         
         Bicicleta aBuscar = new Bicicleta(codigo.trim(), "");
@@ -133,11 +130,6 @@ public class Sistema implements IObligatorio {
         
         
         bicicleta.setUbicacion("DEPOSITO");
-        
-        //if (this.deposito != null && !this.deposito.existeElemento(bicicleta)) {
-        //this.deposito.agregarAlFinal(bicicleta);
-        //}
-        
         bicicleta.setUsuario(null);
         bicicleta.setEstado("MANTENIMIENTO");
         bicicleta.setMotivoMantenimiento(motivo.trim());
@@ -146,14 +138,13 @@ public class Sistema implements IObligatorio {
         return Retorno.ok();
     }
 
-    @Override //HACER
+    @Override
     public Retorno repararBicicleta(String codigo) {
         
         if(codigo == null || codigo.trim().isEmpty()){
             return Retorno.error1();
         }
         
-        // buscar bici
         Bicicleta aBuscar = new Bicicleta(codigo.trim(), "");
         Bicicleta bicicleta = this.bicicletas.obtenerElemento(aBuscar);
         if (bicicleta == null){
@@ -263,10 +254,6 @@ public class Sistema implements IObligatorio {
         }
         return Retorno.ok(resultado);
     }
-    
-
-    
-    
 
     @Override
     public Retorno listarBicisEnDeposito() {
@@ -294,11 +281,103 @@ public class Sistema implements IObligatorio {
         return Retorno.ok(resultado);
     }
 
+    
         @Override
         public Retorno informaciónMapa(String[][] mapa) {
 
-                return Retorno.noImplementada();
+        // Caso vacío o nulo 
+        if (mapa == null || mapa.length == 0) {
+            return Retorno.ok("0#ambas|no existe");
+        }
 
+        int filas = mapa.length;//cantidad filas
+        int cols = 0;//secalcula por fila porque puede no tener el mismo ancho
+
+        //se recorren las filas y si es mayor al nro de cols, cols pasa a ser lo contado
+        for (int i = 0; i < filas; i++) {
+            if (mapa[i] != null && mapa[i].length > cols) {
+                cols = mapa[i].length;
+            }
+        }
+        // si es cero significa que son null o vacias
+        if (cols == 0) {
+            return Retorno.ok("0#ambas|no existe");
+        }
+
+
+        int[] filasCnt = new int[filas];//giarda estaciones de la filai
+        int[] colsCnt  = new int[cols];//guarda estaciones de columna
+        
+        //la fila puede tener distinto largo o no tener nada,
+        //se calcula el ancho y se recorre
+        for (int i = 0; i < filas; i++) {
+            int ancho;
+                if (mapa[i] == null) {
+                    ancho = 0;
+                } else {
+                    ancho = mapa[i].length;
+                }
+            for (int j = 0; j < ancho; j++) {
+                String celda = mapa[i][j];
+                if (celda != null && !celda.trim().isEmpty()) {//se detecta si hay estacion en la celda y se cuenta
+                    filasCnt[i] = filasCnt[i] + 1;
+                    colsCnt[j]  = colsCnt[j] + 1;
+                }
+            }
+        }
+
+        //maximo de fila se guarda
+        int maxFila = 0;
+        for (int i = 0; i < filas; i++) {
+            if (filasCnt[i] > maxFila)
+                maxFila = filasCnt[i];
+        }
+        //maximo columna se guarda
+        int maxCol = 0;
+        for (int j = 0; j < cols; j++) {
+            if (colsCnt[j] > maxCol) 
+                maxCol = colsCnt[j];
+        }
+
+        //para ver quien tiene los maximos y asignarle un resultado
+        int max;
+        String resultado;
+
+        if (maxFila > maxCol) {
+            max = maxFila;
+            resultado = "fila";
+        } else if (maxCol > maxFila) {
+            max = maxCol;
+            resultado = "columna";
+        } else {
+            max = maxFila;
+            resultado = "ambas";
+        }
+
+        //existen 3 columnras ascendentes
+        String existeAsc;
+        if (cols < 3) {//si hay menos de 3 directamente no existe
+            existeAsc = "no existe";
+        } else {
+            boolean existe = false;
+            for (int j = 0; j <= cols - 3 && !existe; j++) {//es hasta -3 para que j+2 no se salga
+                int a = colsCnt[j];
+                int b = colsCnt[j + 1];
+                int c = colsCnt[j + 2];
+                if (a < b && b < c) {
+                    existe = true;
+                }
+            }
+        if (existe) {
+            existeAsc = "existe";
+        } else {
+            existeAsc = "no existe";
+            }        
+        
+        }
+
+    String valor = max + "#" + resultado + "|" + existeAsc;
+    return Retorno.ok(valor);
     }
 
     @Override

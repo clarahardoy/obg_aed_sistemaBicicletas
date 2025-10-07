@@ -3,7 +3,7 @@ package sistemaAutogestion;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class Test2_01CrearSistemaDeGestion {
+public class Test1_01CrearSistemaDeGestion {
 
     private Retorno retorno;
     private final IObligatorio s = new Sistema();

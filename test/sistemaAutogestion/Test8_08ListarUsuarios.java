@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class Test3_02ListarUsuarios {
+public class Test8_08ListarUsuarios {
 
     private Retorno retorno;
     private final IObligatorio s = new Sistema();
@@ -23,10 +23,10 @@ public class Test3_02ListarUsuarios {
 
     @Test
     public void listarUsuariosSoloUnUsuario() {
-        s.registrarUsuario("12345678", "Usuario01");
+        s.registrarUsuario("12345678", "Lucia");
         retorno = s.listarUsuarios();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("Usuario01#12345678", retorno.getValorString());
+        assertEquals("Lucia#12345678", retorno.getValorString());
     }
 
     @Test
@@ -37,6 +37,7 @@ public class Test3_02ListarUsuarios {
         retorno = s.listarUsuarios();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("Usuario01#11111111|Usuario02#31221111|Usuario03#11331111", retorno.getValorString());
+
     }
 
     @Test
@@ -47,6 +48,7 @@ public class Test3_02ListarUsuarios {
         retorno = s.listarUsuarios();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("Usuario01#11111111|Usuario02#31221111|Usuario03#11331111", retorno.getValorString());
+
     }
 
 }
