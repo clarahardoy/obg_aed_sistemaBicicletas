@@ -43,7 +43,7 @@ public class Test2_05MarcarEnMantenimiento {
         assertTrue(dep.toUpperCase().contains("ABC001#URBANA#MANTENIMIENTO"));
     }
 
-    @Test //NO PASA
+    @Test //OK
     public void ok_BiciEnDepositoDisponiblePasaAMantenimientoYSeReubicaAlFinal() {
         // B1 y B2 quedan en depósito en ese orden
         s.registrarBicicleta("ABC001", "URBANA");
@@ -103,7 +103,7 @@ public class Test2_05MarcarEnMantenimiento {
     // ===================== ERROR_3 =====================
     // Bici actualmente alquilada
 
-    @Test //NO PASA
+    @Test //OK
     public void error3_BiciAlquilada() {
         s.registrarEstacion("E1", "Centro", 1);
         s.registrarUsuario("12345678", "Ana");
@@ -111,7 +111,7 @@ public class Test2_05MarcarEnMantenimiento {
         s.asignarBicicletaAEstacion("ABC001", "E1");
 
         s.alquilarBicicleta("12345678", "E1"); // ahora está ALQUILADA
-
+         
         ret = s.marcarEnMantenimiento("ABC001", "no frena");
         assertEquals(Retorno.Resultado.ERROR_3, ret.getResultado());
     }
@@ -131,5 +131,6 @@ public class Test2_05MarcarEnMantenimiento {
         ret = s.marcarEnMantenimiento("ABC001", "otro motivo");
         assertEquals(Retorno.Resultado.ERROR_4, ret.getResultado());
     }
+ 
 }
 

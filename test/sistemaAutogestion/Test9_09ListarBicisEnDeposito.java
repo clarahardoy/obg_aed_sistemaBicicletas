@@ -27,7 +27,7 @@ public class Test9_09ListarBicisEnDeposito {
 
         retorno  = s.listarBicisEnDeposito();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("AAA123#URBANA#DISPONIBLE", retorno.getValorString());
+        assertEquals("AAA123#URBANA#Disponible", retorno.getValorString());
     }
     
     @Test //SE LISTARON 2 BICIS Y UNA SE CAMBIO DE ESTADO
@@ -42,7 +42,7 @@ public class Test9_09ListarBicisEnDeposito {
         Retorno r = s.listarBicisEnDeposito();
         assertEquals(Retorno.Resultado.OK, r.getResultado());
         assertEquals(
-            "BBB111#ELECTRICA#DISPONIBLE|CCC222#MOUNTAIN#MANTENIMIENTO",
+            "BBB111#ELECTRICA#Disponible|CCC222#MOUNTAIN#Mantenimiento",
             r.getValorString()
         );
         

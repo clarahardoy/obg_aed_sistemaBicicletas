@@ -135,16 +135,11 @@ public class Sistema implements IObligatorio {
             bicicleta.setEstacion(null);
         }
         
-        
         bicicleta.setUbicacion("DEPOSITO");
         bicicleta.setUsuario(null);
         bicicleta.setEstado("MANTENIMIENTO");
         bicicleta.setMotivoMantenimiento(motivo.trim());
         
-        this.bicicletas.eliminar(bicicleta);
-        this.bicicletas.agregarAlFinal(bicicleta);
-
-
         return Retorno.ok();
     }
 
@@ -294,7 +289,7 @@ public class Sistema implements IObligatorio {
         @Override
         public Retorno informaciónMapa(String[][] mapa) {
 
-        // Caso vacío o nulo 
+         // Caso vacío o nulo 
         if (mapa == null || mapa.length == 0) {
             return Retorno.ok("0#ambas|no existe");
         }
@@ -327,8 +322,12 @@ public class Sistema implements IObligatorio {
                     ancho = mapa[i].length;
                 }
             for (int j = 0; j < ancho; j++) {
-                String celda = mapa[i][j].trim();
-                if (celda.matches("(?i)^e\\d+$")) {//se detecta si hay estacion en la celda y se cuenta
+                 String raw = mapa[i][j];
+                if (raw == null) continue;
+
+                String celda = raw.trim();
+                if (celda.isEmpty()) continue; 
+                if (celda.matches("(?i)^e\\d*$")) {//se detecta si hay estacion en la celda (empieza con E) y se cuenta
                     filasCnt[i] = filasCnt[i] + 1;
                     colsCnt[j]  = colsCnt[j] + 1;
                 }

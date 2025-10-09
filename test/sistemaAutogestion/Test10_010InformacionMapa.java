@@ -40,9 +40,9 @@ public class Test10_010InformacionMapa {
     @Test
     public void informacionMapaOkAmbasNoExisteAsc() {
         String[][] mapa = new String[][] {
-            { "A",  null, " "  },
-            { null, "B",  "C"  },
-            { null, null, "D"  }
+            { "E1",  null, " "  },
+            { null, "E2",  "E3"  },
+            { null, null, "E4"  }
         };
         retorno  = s.informaciónMapa(mapa);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
@@ -52,8 +52,8 @@ public class Test10_010InformacionMapa {
     @Test
     public void informacionMapaOkAmbasSiExisteAsc() {
         String[][] mapa = new String[][] {
-            { null, null, "A" },
-            { null, "B",  "C" },
+            { null, null, "E1" },
+            { null, "E2",  "E4" },
             { null, null, null }
         };
         retorno  = s.informaciónMapa(mapa);
@@ -64,9 +64,9 @@ public class Test10_010InformacionMapa {
     @Test
     public void informacionMapaOkMaxColumnaSinAsc() {
         String[][] mapa = new String[][] {
-            { "A",  null, "C",  null },
-            { null, "B2", "C2", null },
-            { null, null, "C3", null }
+            { "E1",  null, "E2",  null },
+            { null, "E5", "E4", null },
+            { null, null, "E6", null }
         };
         retorno  = s.informaciónMapa(mapa);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
@@ -77,8 +77,8 @@ public class Test10_010InformacionMapa {
     public void informacionMapaOkIrregularYEspacios() {
         String[][] mapa = new String[][] {
             null,
-            { "X", "   " },
-            { "A", null, "B", "" }
+            { "E1", "   " },
+            { "E2", null, "E3", "" }
         };
 
         retorno  = s.informaciónMapa(mapa);
@@ -89,8 +89,8 @@ public class Test10_010InformacionMapa {
     @Test
     public void informacionMapaOkMenosDeTresColumnas() {
         String[][] mapa = new String[][] {
-            { "A", null },
-            { null, "B" }
+            { "E1", null },
+            { null, "E2" }
         };
 
         retorno  = s.informaciónMapa(mapa);

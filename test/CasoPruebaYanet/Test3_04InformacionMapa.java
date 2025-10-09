@@ -15,7 +15,7 @@ public class Test3_04InformacionMapa {
     @Before
     public void setUp() { s.crearSistemaDeGestion(); }
 
-    @Test //OK
+    @Test //NO PASA
     public void ejemplo1() {
         String o = "o";
         String[][] mapa = {
@@ -33,7 +33,7 @@ public class Test3_04InformacionMapa {
         assertEquals("3#columna|existe", r.getValorString());
     }
 
-    @Test //OK
+    @Test //NO PASA
     public void ejemplo2() {
         String o = "o";
         String[][] mapa = {
@@ -50,7 +50,7 @@ public class Test3_04InformacionMapa {
         assertEquals("2#ambas|existe", r.getValorString());
     }
 
-    @Test //OK
+    @Test //NO PASA
     public void ejemplo3() {
         String o = "o";
         String[][] mapa = {
@@ -67,7 +67,7 @@ public class Test3_04InformacionMapa {
         assertEquals("2#ambas|no existe", r.getValorString());
     }
     
-    @Test ///OK
+    @Test ///NO PASA
     public void noHayTernasConsecutivasAscendentes_0based() {
         String o = "o";
         String[][] mapa = {
@@ -94,7 +94,7 @@ public class Test3_04InformacionMapa {
         assertEquals("0#ambas|no existe", s.informaciónMapa(new String[][] { {} }).getValorString());
     }
 
-    @Test //OK
+    @Test //NO PASA
     public void sinEstaciones() {
         String o="o";
         String[][] m = {
@@ -104,7 +104,7 @@ public class Test3_04InformacionMapa {
         assertEquals("0#ambas|no existe", s.informaciónMapa(m).getValorString());
     }
 
-    @Test //OK
+    @Test //NO PASA
     public void soloUnaColumna_noPuedeHaberTriple() {
         String[][] m = {
             {"E1"},
@@ -114,7 +114,7 @@ public class Test3_04InformacionMapa {
         assertEquals("2#columna|no existe", s.informaciónMapa(m).getValorString());
     }
 
-    @Test //OK
+    @Test //NO PASA
     public void dosColumnas_noPuedeHaberTriple() {
         String o="o";
         String[][] m = {
@@ -125,7 +125,7 @@ public class Test3_04InformacionMapa {
         assertEquals("1#ambas|no existe", s.informaciónMapa(m).getValorString());
     }
 
-    @Test //OK
+    @Test //NO PASA
     public void exactamenteTresColumnas_tripleSi() {
         String o="o";
         String[][] m = {
@@ -136,7 +136,7 @@ public class Test3_04InformacionMapa {
         assertEquals("2#columna|existe", s.informaciónMapa(m).getValorString());
     }
 
-    @Test //OK
+    @Test //NO PASA
     public void exactamenteTresColumnas_noTriple() {
         String o="o";
         String[][] m = {
@@ -168,7 +168,7 @@ public class Test3_04InformacionMapa {
         assertEquals("3#columna|no existe", s.informaciónMapa(m).getValorString());
     }
 
-    @Test //OK
+    @Test //NO PASA
     public void maximoEmpatado_enFilaYColumna_ambas() {
         String o="o";
         String[][] m2 = {
@@ -179,7 +179,7 @@ public class Test3_04InformacionMapa {
         assertEquals("2#ambas|no existe", s.informaciónMapa(m2).getValorString());
     }
 
-    @Test //OK
+    @Test //NO PASA
     public void reconoceMinusculasYEspacios() {
         String[][] m = {
             {" e1 ", "o", "o"},
@@ -189,7 +189,7 @@ public class Test3_04InformacionMapa {
         assertEquals("1#ambas|no existe", s.informaciónMapa(m).getValorString());
     }
 
-    @Test //OK
+    @Test //NO PASA
     public void variasTernasConsecutivasAscendentes() {
         String o="o";
         String[][] m = {
