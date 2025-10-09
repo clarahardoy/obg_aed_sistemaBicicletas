@@ -155,7 +155,5 @@ public class ListaSE<T extends Comparable<T>> implements IListaSimple<T> {
         }
 
         cantidadElementos++;
-    }
-    
-       
+    }      
 }
