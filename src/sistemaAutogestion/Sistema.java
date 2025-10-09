@@ -268,10 +268,10 @@ public class Sistema implements IObligatorio {
             Bicicleta b = this.bicicletas.obtenerElementoPorIndice(i);
             if(b != null){
                 String ubi = b.getUbicacion();
-                if(ubi != null && "DEPOSiTO".equalsIgnoreCase(ubi)){
+                if(ubi != null && "DEPOSITO".equalsIgnoreCase(ubi)){
                     
                     
-                    String item = b.getCodigo() + "#" + b.getTipo() + "#" + b.getEstado();
+                    String item = b.getCodigo() + "#" + b.getTipo() + "#" + b.formatearEstado(b.getEstado());
                     
                     if(resultado.isEmpty()) resultado = item;
                     else resultado = resultado + "|" + item;

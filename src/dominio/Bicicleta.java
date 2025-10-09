@@ -103,4 +103,8 @@ public class Bicicleta implements Comparable<Bicicleta> {
         
         return this.codigo.strip().compareToIgnoreCase(obj.codigo.strip());
     }    
+    
+    public String formatearEstado(String estado){
+        return estado.substring(0,1).toUpperCase() + estado.substring(1).toLowerCase();
+    }
 }
