@@ -140,7 +140,10 @@ public class Sistema implements IObligatorio {
         bicicleta.setUsuario(null);
         bicicleta.setEstado("MANTENIMIENTO");
         bicicleta.setMotivoMantenimiento(motivo.trim());
-       
+        
+        this.bicicletas.eliminar(bicicleta);
+        this.bicicletas.agregarAlFinal(bicicleta);
+
 
         return Retorno.ok();
     }
@@ -277,7 +280,6 @@ public class Sistema implements IObligatorio {
                 String ubi = b.getUbicacion();
                 if(ubi != null && "DEPOSITO".equalsIgnoreCase(ubi)){
                     
-                    
                     String item = b.getCodigo() + "#" + b.getTipo() + "#" + b.formatearEstado(b.getEstado());
                     
                     if(resultado.isEmpty()) resultado = item;
@@ -325,8 +327,8 @@ public class Sistema implements IObligatorio {
                     ancho = mapa[i].length;
                 }
             for (int j = 0; j < ancho; j++) {
-                String celda = mapa[i][j];
-                if (celda != null && !celda.trim().isEmpty()) {//se detecta si hay estacion en la celda y se cuenta
+                String celda = mapa[i][j].trim();
+                if (celda.matches("(?i)^e\\d+$")) {//se detecta si hay estacion en la celda y se cuenta
                     filasCnt[i] = filasCnt[i] + 1;
                     colsCnt[j]  = colsCnt[j] + 1;
                 }

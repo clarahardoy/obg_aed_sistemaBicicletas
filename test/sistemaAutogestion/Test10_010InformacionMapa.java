@@ -2,7 +2,7 @@
 package sistemaAutogestion;
 
 import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.Before;  
 import org.junit.Test;
 
 public class Test10_010InformacionMapa {
