@@ -56,10 +56,13 @@ public class Sistema implements IObligatorio {
         if(cedula == null || cedula.trim().isEmpty() || nombre == null || nombre.trim().isEmpty())
             return Retorno.error1();
         
-        if(!cedula.matches("\\d{8}"))//cedula debe ser exactamente de 8 digitos
+        String cedulaLimpia = cedula.trim();
+        String nombreLimpio = nombre.trim();
+        
+        if(!cedulaLimpia.matches("\\d{8}"))//cedula debe ser exactamente de 8 digitos
                 return Retorno.error2();
         
-        Usuario u = new Usuario(cedula, nombre);
+        Usuario u = new Usuario(cedulaLimpia, nombreLimpio);
         if(usuarios.existeElemento(u))
             return Retorno.error3();
         

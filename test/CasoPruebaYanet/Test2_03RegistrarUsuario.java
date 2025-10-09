@@ -37,7 +37,7 @@ public class Test2_03RegistrarUsuario {
         assertEquals(Retorno.Resultado.OK, ret.getResultado());
     }
 
-    @Test //NO PASA
+    @Test //OK
     public void ok_TrimEnAmbosCampos() {
         ret = s.registrarUsuario(" 12345678 ", "  Juan Perez  ");
         assertEquals(Retorno.Resultado.OK, ret.getResultado());

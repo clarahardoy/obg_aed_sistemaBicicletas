@@ -226,7 +226,7 @@ public class Test_Estudiantes_parcial {
     /* ===========================
        3.3 listarBicisEnDeposito (recursiva)
        =========================== */
-    @Test
+    @Test //OK
     public void listarBicisEnDeposito_Ok_OrdenIngresoYEstados() {
         s.registrarBicicleta("A00001", "URBANA");    // Disponible (depósito)
         s.registrarBicicleta("A00002", "ELECTRICA"); // Disponible (depósito)
