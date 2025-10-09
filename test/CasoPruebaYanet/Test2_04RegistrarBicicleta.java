@@ -87,14 +87,14 @@ public class Test2_04RegistrarBicicleta {
         assertEquals(Retorno.Resultado.ERROR_2, ret.getResultado());
     }
 
-    @Test //NO PASA
+    @Test //OK
     public void error2_MinusculasNoPermitidas() {
         // Como NO conviertes a mayúsculas antes de validar, debe fallar
         ret = s.registrarBicicleta("ab123c", "URBANA");
         assertEquals(Retorno.Resultado.ERROR_2, ret.getResultado());
     }
 
-    @Test //NO PASA
+    @Test //OK
     public void error2_SimbolosOGuionesOEspacioInterno() {
         ret = s.registrarBicicleta("AB_123", "URBANA");
         assertEquals(Retorno.Resultado.ERROR_2, ret.getResultado());
@@ -106,7 +106,7 @@ public class Test2_04RegistrarBicicleta {
         assertEquals(Retorno.Resultado.ERROR_2, ret.getResultado());
     }
 
-    @Test //NO PASA
+    @Test //OK
     public void error2_UnicodeNoASCII() {
         // Dígitos árabes (Unicode)
         ret = s.registrarBicicleta("AB١٢٣٤", "URBANA");

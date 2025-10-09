@@ -77,12 +77,16 @@ public class Sistema implements IObligatorio {
        if(codigo == null || codigo.trim().isEmpty() || tipo == null || tipo.trim().isEmpty())
            return Retorno.error1();
        
-       if(codigo.length() != 6)
+        String codLimpio = codigo.trim();
+        String tipoLimpio = tipo.trim();
+       
+       if (!codLimpio.matches("^[A-Z0-9]{6}$")) {
            return Retorno.error2();
+       }
        
-       if(!tipoValido(tipo))
+       if(!tipoValido(tipoLimpio))
            return Retorno.error3();
-       
+
        Bicicleta b = new Bicicleta(codigo, tipo);
        if(bicicletas.existeElemento(b))
            return Retorno.error4();
