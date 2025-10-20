@@ -4,12 +4,14 @@ package sistemaAutogestion;
 
 import dominio.*;
 import tads.ListaSE;
+import tads.PilaSE;
 
 public class Sistema implements IObligatorio {
     
     private ListaSE<Estacion> estaciones;
     private ListaSE<Usuario> usuarios;
     private ListaSE<Bicicleta> bicicletas;
+    private PilaSE<Alquiler> pilaUltimosAlquileres; 
     
     // ------------- ADMINISTRACION DE BICICLETAS ------------------------
     
@@ -166,7 +168,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok();
     }
 
-    @Override //NO VA
+    @Override
     public Retorno eliminarEstacion(String nombre) {
         
         if (nombre == null || nombre.isEmpty()){
@@ -177,18 +179,19 @@ public class Sistema implements IObligatorio {
         Estacion estacion = this.estaciones.obtenerElemento(estacionABuscar);
         if (estacion == null) return Retorno.error2(); 
         
-        // la letra dice: ni reservas/colas pendientes. preguntarle
-        // boolean tieneReservasPendientes = estacion.;
         boolean tieneBicicletasAncladas = !estacion.getBicicletas().esVacia();
-        
-        if (tieneBicicletasAncladas) {
+        boolean tieneColaAlquiler = !estacion.getColaEsperaAlquiler().esVacia();
+        boolean tieneColaAnclaje = !estacion.getColaEsperaAnclaje().esVacia();
+
+        if (tieneBicicletasAncladas || tieneColaAlquiler || tieneColaAnclaje) {
             return Retorno.error3(); 
         }
         
+        // si todo ok, eliminar
         this.estaciones.eliminar(estacion);
         return Retorno.ok(); 
     }
-
+    
     @Override
     public Retorno asignarBicicletaAEstacion(String codigo, String nombreEstacion) {
         return Retorno.noImplementada();
