@@ -681,7 +681,65 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno usuariosEnEspera(String nombreEstacion) {
-        return Retorno.noImplementada();
+        if (nombreEstacion == null) {
+            return Retorno.ok("");
+        }
+        nombreEstacion = nombreEstacion.trim();
+        if (nombreEstacion.isEmpty()) {
+            return Retorno.ok("");
+        }
+
+        // Buscar estación por nombre
+        Estacion est;
+        if (estaciones == null || estaciones.esVacia()) {
+            est = null;
+        } else {
+            est = estaciones.obtenerElemento(new Estacion(nombreEstacion, "", 0));
+        }
+        if (est == null) {
+            return Retorno.ok("");
+        }
+
+        // agarrar la cola de espera por alquiler
+        tads.ColaSE<Usuario> cola = est.getColaEsperaAlquiler();
+        if (cola == null || cola.esVacia()) {
+            return Retorno.ok("");
+        }
+
+        //se recorre y se agrega en la aux sin perder el orden
+        //para listar hay que desencolar para leer los elementos y se guardan en la aux
+        
+        tads.ColaSE<Usuario> aux = new tads.ColaSE<>();
+        String resultado = "";
+
+        while (!cola.esVacia()) {
+            Usuario u = cola.desencolar();
+            if (u != null) {
+                String ci;
+                if (u.getCedula() == null) {
+                    ci = "";
+                } else {
+                    ci = u.getCedula().trim();
+                }
+
+                if (!ci.isEmpty()) {
+                    if (resultado.isEmpty()) {
+                        resultado = ci;
+                    } else {
+                        resultado = resultado + "|" + ci;
+                    }
+                }
+
+                aux.encolar(u); 
+            }
+        }
+
+        //despues se retaura la aux y queda en el mismo orden que estaba
+        while (!aux.esVacia()) {
+            cola.encolar(aux.desencolar());
+        }
+
+        return Retorno.ok(resultado);
     }
 
     @Override
