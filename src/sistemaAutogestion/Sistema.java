@@ -605,8 +605,64 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno listarBicicletasDeEstacion(String nombreEstacion) {
-        return Retorno.noImplementada();
-    }
+        if (nombreEstacion == null) {
+            return Retorno.ok("");
+        }
+        nombreEstacion = nombreEstacion.trim();
+        if (nombreEstacion.isEmpty()) {
+            return Retorno.ok("");
+        }
+
+        // Busca la estación por nombre
+        Estacion est;
+        if (estaciones == null || estaciones.esVacia()) {
+            est = null;
+        } else {
+            est = estaciones.obtenerElemento(new Estacion(nombreEstacion, "", 0));
+        }
+        if (est == null) {
+            return Retorno.ok("");
+        }
+
+        // Si no tiene bicis, salida vacía o sea se ejecuto bien pero no hay para mostrar
+        if (est.getBicicletas() == null || est.getBicicletas().esVacia()) {
+            return Retorno.ok("");
+        }
+        
+        //lista auxiliar ordenada
+        tads.ListaSE<String> codigosOrdenados = new tads.ListaSE<>();
+
+        int cantBici = est.getBicicletas().getCantidadElementos();
+        int i = 0;
+        while (i < cantBici) {
+            Bicicleta bici = est.getBicicletas().obtenerElementoPorIndice(i);
+            if (bici != null && bici.getCodigo() != null) {
+                String cod = bici.getCodigo().trim();
+                if (!cod.isEmpty()) {
+                    codigosOrdenados.adicionarOrdenado(cod); // se inserta en orden creciente
+                }
+            }
+            i = i + 1; // adiciono a la variable
+        }
+
+        // se arma el resultado
+        String resultado = "";
+        int cantCodOrd = codigosOrdenados.getCantidadElementos();
+        int j = 0;
+        while (j < cantCodOrd) {
+            String cod = codigosOrdenados.obtenerElementoPorIndice(j);
+            if (cod != null && !cod.isEmpty()) {
+                if (resultado.isEmpty()) {
+                    resultado = cod;
+                } else {
+                    resultado = resultado + "|" + cod;
+                }
+            }
+            j = j + 1;
+        }
+
+    return Retorno.ok(resultado);
+}
 
     @Override
     public Retorno estacionesConDisponibilidad(int n) {
