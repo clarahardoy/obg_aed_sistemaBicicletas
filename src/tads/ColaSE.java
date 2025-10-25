@@ -1,14 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package tads;
 
-/**
- *
- * @author clarahardoy
- */
-public class ColaSE<T extends Comparable> implements ICola<T> {
+public class ColaSE<T extends Comparable<T>> implements ICola<T> {
     private Nodo<T>  frente;
     private Nodo<T> fondo; 
     
@@ -19,7 +12,7 @@ public class ColaSE<T extends Comparable> implements ICola<T> {
     
     @Override
     public void encolar (T dato) {
-        Nodo<T> nodo_nuevo = new Nodo<T>(dato);
+        Nodo<T> nodo_nuevo = new Nodo<>(dato);
         if(esVacia()) {
             frente = nodo_nuevo;
         }

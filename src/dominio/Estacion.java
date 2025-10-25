@@ -10,9 +10,9 @@ public class Estacion implements Comparable<Estacion> {
     private  String nombre;
     private String barrio;
     private int capacidad;
-    public ListaSE<Bicicleta> bicicletas;
-    public ColaSE<Usuario> colaEsperaAnclaje; 
-    public ColaSE<Usuario> colaEsperaAlquiler; 
+    public ListaSE<Bicicleta> bicicletas; 
+    public ColaSE<Usuario> colaEsperaAlquiler; //usuarios esperando bici
+    public ColaSE<Bicicleta> colaEsperaAnclaje ;//bicis esperando anclaje
     
     public Estacion(String nombre, String barrio, int capacidad){
         this.nombre = nombre;
@@ -20,94 +20,77 @@ public class Estacion implements Comparable<Estacion> {
         this.capacidad = capacidad;
         this.bicicletas = new ListaSE<>();
         this.colaEsperaAlquiler = new ColaSE<>(); // usuarios esperando bici
-        this.colaEsperaAnclaje = new ColaSE<>(); // usuarios esperando anclaje
+        this.colaEsperaAnclaje = new ColaSE<>(); // bici esperando anclaje
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombre() { 
+        return nombre; 
     }
     
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombre(String nombre) { 
+        this.nombre = nombre; 
     }
 
-    public String getBarrio() {
-        return barrio;
+    public String getBarrio() { 
+        return barrio; 
     }
-    
-    public void setBarrio(String barrio) {
-        this.barrio = barrio;
-    }
-
-    public int getCapacidad() {
-        return capacidad;
-    }
-    public void setCapacidad(int capacidad) {
-        this.capacidad = capacidad;
+    public void setBarrio(String barrio) { 
+        this.barrio = barrio; 
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 23 * hash + Objects.hashCode(this.nombre);
-        return hash;
+    public int getCapacidad() { 
+        return capacidad; 
     }
-    
-    public ListaSE<Bicicleta> getBicicletas() {
-        return bicicletas;
+    public void setCapacidad(int capacidad) { 
+        this.capacidad = capacidad; 
     }
 
-    public void setBicicletas(ListaSE<Bicicleta> bicicletas) {
-        this.bicicletas = bicicletas;
+    public ListaSE<Bicicleta> getBicicletas() { 
+        return bicicletas; 
     }
     
-    public ColaSE<Usuario> getColaEsperaAlquiler() {
-        return colaEsperaAlquiler;
+    public void setBicicletas(ListaSE<Bicicleta> bicicletas) { 
+        this.bicicletas = bicicletas; 
     }
 
-    public void setColaEsperaAlquiler(ColaSE<Usuario> colaEsperaAlquiler) {
-        this.colaEsperaAlquiler = colaEsperaAlquiler;
+    public ColaSE<Usuario> getColaEsperaAlquiler() { 
+        return colaEsperaAlquiler; 
     }
-    
-    public ColaSE<Usuario> getColaEsperaAnclaje() {
-        return colaEsperaAlquiler;
+    public void setColaEsperaAlquiler(ColaSE<Usuario> q) { 
+        this.colaEsperaAlquiler = q; 
     }
 
-    public void setColaEsperaAnclaje(ColaSE<Usuario> colaEsperaAnclaje) {
-        this.colaEsperaAnclaje = colaEsperaAnclaje;
+    public ColaSE<Bicicleta> getColaEsperaAnclaje() { 
+        return colaEsperaAnclaje; 
     }
-    
-    public boolean tieneEspacioDisponible() {
-        return bicicletas.getCantidadElementos() < capacidad;
+    public void setColaEsperaAnclaje(ColaSE<Bicicleta> q) { 
+        this.colaEsperaAnclaje = q; 
     }
-    
-    public int getCantidadBicicletasAncladas() {
-        return bicicletas.getCantidadElementos();
+
+    public boolean tieneEspacioDisponible() { 
+        return bicicletas.getCantidadElementos() < capacidad; 
     }
-    
-    public int getEspaciosLibres() {
-        return capacidad - bicicletas.getCantidadElementos();
+    public int getCantidadBicicletasAncladas() { 
+        return bicicletas.getCantidadElementos(); 
+    }
+    public int getEspaciosLibres() { 
+        return capacidad - bicicletas.getCantidadElementos(); 
     }
     
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Estacion other = (Estacion) obj;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Estacion)) return false;
+        Estacion other = (Estacion) o;
         return Objects.equals(this.nombre, other.nombre);
     }
-    
+
+    @Override
+    public int hashCode() { return Objects.hash(nombre); }
+
     @Override
     public int compareTo(Estacion obj) {
-        if (obj == null) return 1; 
-       
+        if (obj == null) return 1;
         return this.nombre.trim().compareToIgnoreCase(obj.nombre.trim());
     }
 }

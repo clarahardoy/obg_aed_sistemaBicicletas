@@ -20,6 +20,7 @@ public class Sistema implements IObligatorio {
         estaciones = new ListaSE();
         usuarios = new ListaSE();
         bicicletas = new ListaSE();
+        pilaUltimosAlquileres = new PilaSE<>();
 
         return Retorno.ok();
     }
@@ -194,48 +195,259 @@ public class Sistema implements IObligatorio {
     
     @Override
     public Retorno asignarBicicletaAEstacion(String codigo, String nombreEstacion) {
-        return Retorno.noImplementada();
+        if (codigo == null || nombreEstacion == null || codigo.isEmpty() 
+                || nombreEstacion.isEmpty()) 
+            return Retorno.error1();
+        
+        Bicicleta bici = null;
+        if (this.bicicletas != null) {
+            bici = this.bicicletas.obtenerElemento(new Bicicleta(codigo, ""));
+        }
+        if (bici == null) {
+            return Retorno.error2(); // no existe
+        }
+        //si el estado es null "" sino agarra el estado y se lo pone
+        String estado = (bici.getEstado() == null) ? "" : bici.getEstado().trim();
+        if (!estado.equalsIgnoreCase("DISPONIBLE")) {
+            return Retorno.error2(); // no disponible
+        }
+        
+         Estacion destino = null;
+        if (this.estaciones != null) {
+            destino = this.estaciones.obtenerElemento(new Estacion(nombreEstacion, "", 0));
+        }
+        if (destino == null) {
+            return Retorno.error3(); // estación no existe
+        }
+        
+        //si ya esta en la misma estacion no se hace nada, esta ok
+        if (bici.getEstacion() != null && bici.getEstacion().equals(destino)) {
+        bici.setUbicacion("ESTACION"); 
+        return Retorno.ok();
+        }
+        
+        int ocupadas = 0;
+        if (destino.getBicicletas() != null) {
+            ocupadas = destino.getBicicletas().getCantidadElementos();
+        }
+        if (ocupadas >= destino.getCapacidad()) {
+            return Retorno.error4(); // sin anclajes libres
+        }
+        
+        //se elimina bici de la estacion de origen
+        Estacion origen = bici.getEstacion();
+        if (origen != null && origen.getBicicletas() != null) {
+            origen.getBicicletas().eliminar(bici);
+        }
+        //se ancla la bicci en la estacion destino
+        if (destino.getBicicletas() != null) {
+        destino.getBicicletas().agregarAlFinal(bici);
+        }
+        bici.setEstacion(destino);
+        bici.setUbicacion("ESTACION");
+        // estado se mantiene "DISPONIBLE"
+
+        return Retorno.ok();
+        
     }
+    
+    private Usuario buscarUsuario(String ci) {
+        if (usuarios == null || usuarios.esVacia()) return null;
+        return usuarios.obtenerElemento(new Usuario(ci, ""));
+        }
+    private Estacion buscarEstacion(String nom) {
+        if (estaciones == null || estaciones.esVacia()) return null;
+        return estaciones.obtenerElemento(new Estacion(nom, "", 0));
+        }
+    private Bicicleta tomarBiciDisponibleDe(Estacion est) {
+        if (est == null || est.getBicicletas() == null || est.getBicicletas().esVacia()) return null;
+
+        int n = est.getBicicletas().getCantidadElementos();
+        int i = 0;
+        while (i < n) {
+            Bicicleta b = est.getBicicletas().obtenerElementoPorIndice(i);
+
+            if (b != null) {
+                String estado;
+                if (b.getEstado() == null) {
+                    estado = "";
+                } else {
+                    estado = b.getEstado().trim();
+                }
+
+                if (estado.equalsIgnoreCase("DISPONIBLE")) {
+                    // la saco de la lista de la estación para pasarla a EN USO
+                    est.getBicicletas().eliminar(b);
+                    return b;
+                }
+            }
+
+            i = i + 1;
+        }
+
+        return null;
+    }
+
+    
 
     @Override
     public Retorno alquilarBicicleta(String cedula, String nombreEstacion) {
-        return Retorno.noImplementada();
-    }
+        //validar parámetros
+        if (cedula == null || nombreEstacion == null) return Retorno.error1();
+        
+        String ci  = cedula.trim();
+        String nom = nombreEstacion.trim();
+        if (ci.isEmpty() || nom.isEmpty()) return Retorno.error1();
 
-    @Override
-    public Retorno devolverBicicleta(String cedula, String nombreEstacionDestino) {
-        return Retorno.noImplementada();
-    }
+        // usuario inexistente
+        Usuario usu = buscarUsuario(ci);
+        if (usu == null) return Retorno.error2();
 
-    @Override
-    public Retorno deshacerUltimosRetiros(int n) {
-        return Retorno.noImplementada();
-    }
-    
-    // ---------------------- LISTADOS Y REPORTES ----------------------
+        // estación inexistente
+        Estacion est = buscarEstacion(nom);
+        if (est == null) return Retorno.error3();
 
-    @Override
-    public Retorno obtenerUsuario(String cedula) {
-        
-        if (cedula == null || cedula.trim().isEmpty()){
-            return Retorno.error1(); 
+        // consulta si hay bici disponible en el momento de alquilar
+        Bicicleta bici = tomarBiciDisponibleDe(est);
+        if (bici != null) {
+            // si hay la marca alguilada y en uso y la saca de la estacion
+            bici.setEstado("ALQUILADA");
+            bici.setUbicacion("EN USO");
+            bici.setUsuario(usu);
+            bici.setEstacion(null); 
+
+            // se registra en la pila de alquileres
+            if (pilaUltimosAlquileres != null) {
+                pilaUltimosAlquileres.apilar(new Alquiler(usu, bici, est));
+            }
+
+            return Retorno.ok();
         }
-        
-        if(!Usuario.validarCedula(cedula)){
-            return Retorno.error2(); 
+
+            // si no hay disponibles, el usuario queda en cola de espera
+            if (est.getColaEsperaAlquiler() != null) {
+                est.getColaEsperaAlquiler().encolar(usu);
+            }
+            return Retorno.ok();
         }
-        
-        String ci = cedula.trim();
-    
-        Usuario aBuscar = new Usuario(ci, "");
-        Usuario usu = this.usuarios.obtenerElemento(aBuscar); 
-        if (usu == null){
-            return Retorno.error3(); 
+
+        @Override
+        public Retorno devolverBicicleta(String cedula, String nombreEstacionDestino) {
+            return Retorno.noImplementada();
         }
-        
-        String datosUsuario = usu.getNombre() + "#" + usu.getCedula();
-        return Retorno.ok(datosUsuario);
-}
+
+        @Override
+        public Retorno deshacerUltimosRetiros(int n) {
+            
+            if (n <= 0) {
+                return Retorno.error1();
+            }
+
+            // Si no hay historial, no hay nada para deshacer
+            if (pilaUltimosAlquileres == null || pilaUltimosAlquileres.esVacia()) {
+                return Retorno.ok("");
+            }
+
+            String resultado = "";//va acumulando resultados
+            int deshechos = 0;//cuenta los retiros deshechos
+            
+            //es con pila porque el ultimo que se hizo se deshace primero
+            while (deshechos < n && !pilaUltimosAlquileres.esVacia()) {
+                Alquiler alq = pilaUltimosAlquileres.desapilar();
+                if (alq == null) {
+                    break;
+                }
+
+                Bicicleta b = alq.getBicicleta();
+                Usuario  u = alq.getUsuario();
+                Estacion origen = alq.getEstacionOrigen();
+
+                // Validación por seguridad
+                if (b == null || u == null || origen == null) {
+                    continue;
+                }
+
+                //se revierte alquiler de la bicicleta
+                b.setUsuario(null);
+                b.setEstado("DISPONIBLE");
+
+                // Si la bici estuviera listada en otra estación, removerla
+                Estacion actual = b.getEstacion();
+                if (actual != null) {
+                    if (!actual.equals(origen)) {
+                        if (actual.getBicicletas() != null) {
+                            actual.getBicicletas().eliminar(b);
+                        }
+                    }
+                }
+
+                // Devuelve a estación de origen: anclar si hay lugar, sino a la cola de anclaje e bicis
+                int ocupadas;
+                if (origen.getBicicletas() == null) {
+                    ocupadas = 0;
+                } else {
+                    ocupadas = origen.getBicicletas().getCantidadElementos();
+                }
+
+                if (ocupadas < origen.getCapacidad()) {
+
+                    if (origen.getBicicletas() != null) {
+                        if (!origen.getBicicletas().existeElemento(b)) {
+                            origen.getBicicletas().agregarAlFinal(b);
+                        }
+                    }
+                    b.setUbicacion("ESTACION");
+                    b.setEstacion(origen);
+                } else {
+                    // Si no hay lugar encolar la bici
+                    if (origen.getColaEsperaAnclaje() != null) {
+                        origen.getColaEsperaAnclaje().encolar(b);
+                    }
+                    b.setUbicacion("ESTACION"); // esperando anclaje en esa estación
+                    b.setEstacion(origen);
+                }
+
+                // se marca el alquiler activo como false
+                alq.setActivo(false);
+
+                // armado del formato de salida
+                String item = b.getCodigo() + "#" + u.getCedula() + "#" + origen.getNombre();
+                if (deshechos == 0) {
+                    resultado = item;
+                } else {
+                    resultado = resultado + "|" + item;
+                }
+
+                deshechos = deshechos + 1;
+            }
+
+            return Retorno.ok(resultado);
+        }
+
+        // ---------------------- LISTADOS Y REPORTES ----------------------
+
+        @Override
+        public Retorno obtenerUsuario(String cedula) {
+
+            if (cedula == null || cedula.trim().isEmpty()){
+                return Retorno.error1(); 
+            }
+
+            if(!Usuario.validarCedula(cedula)){
+                return Retorno.error2(); 
+            }
+
+            String ci = cedula.trim();
+
+            Usuario aBuscar = new Usuario(ci, "");
+            Usuario usu = this.usuarios.obtenerElemento(aBuscar); 
+            if (usu == null){
+                return Retorno.error3(); 
+            }
+
+            String datosUsuario = usu.getNombre() + "#" + usu.getCedula();
+            return Retorno.ok(datosUsuario);
+    }
     @Override
     public Retorno listarUsuarios() {
         if(this.usuarios == null || this.usuarios.esVacia())

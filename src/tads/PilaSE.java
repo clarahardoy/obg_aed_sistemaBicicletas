@@ -1,11 +1,7 @@
-/**
- *
- * @author clarahardoy
- */
 
 package tads;
 
-public class PilaSE<T extends Comparable> implements IPila<T> {
+public class PilaSE<T extends Comparable<T>> implements IPila<T> {
     private Nodo<T> tope; 
     
     public PilaSE() {
@@ -14,23 +10,19 @@ public class PilaSE<T extends Comparable> implements IPila<T> {
     
     @Override
     public void apilar(T dato){
-        Nodo<T> nodo_nuevo = new Nodo<T>(dato); 
-        if (!esVacia()){
+        Nodo<T> nodo_nuevo = new Nodo<>(dato); 
+       
             nodo_nuevo.setSiguiente(tope);
             tope = nodo_nuevo;
-        }     
+            
     }
     
     @Override
     public T desapilar() {
-        T dato_tope = tope.getDato();
-        if (!esVacia()){
-            tope = tope.getSiguiente();
-            return dato_tope;
-        }
-        else {
-            return null;
-        }
+        if (esVacia()) return null;  
+        T dato = tope.getDato();
+        tope = tope.getSiguiente();
+        return dato;
     }
     
     @Override
