@@ -77,6 +77,10 @@ public class Estacion implements Comparable<Estacion> {
         return capacidad - bicicletas.getCantidadElementos(); 
     }
     
+    public boolean tieneColaEsperaAlquiler(){
+        return getColaEsperaAlquiler() != null && !getColaEsperaAlquiler().esVacia();
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

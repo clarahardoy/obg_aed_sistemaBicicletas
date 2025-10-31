@@ -44,12 +44,17 @@ public class Alquiler implements Comparable<Alquiler> {
         return id;
     }
     
+    public boolean isActivo(){
+        return activo; 
+    }
+    
 
     @Override
     public int hashCode() {
         int hash = 7;
         return hash;
     }
+    
 
     @Override
     public boolean equals(Object obj) {
