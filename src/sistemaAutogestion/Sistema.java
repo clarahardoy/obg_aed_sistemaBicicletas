@@ -255,10 +255,12 @@ public class Sistema implements IObligatorio {
         if (usuarios == null || usuarios.esVacia()) return null;
         return usuarios.obtenerElemento(new Usuario(ci, ""));
         }
+    
     private Estacion buscarEstacion(String nom) {
         if (estaciones == null || estaciones.esVacia()) return null;
         return estaciones.obtenerElemento(new Estacion(nom, "", 0));
         }
+    
     private Bicicleta tomarBiciDisponibleDe(Estacion est) {
         if (est == null || est.getBicicletas() == null || est.getBicicletas().esVacia()) return null;
 
@@ -287,8 +289,6 @@ public class Sistema implements IObligatorio {
 
         return null;
     }
-
-    
 
     @Override
     public Retorno alquilarBicicleta(String cedula, String nombreEstacion) {
@@ -396,8 +396,7 @@ public class Sistema implements IObligatorio {
                 return Retorno.ok();
             }
     }
-
-    
+ 
     private Bicicleta buscarBicicletaAlquiladaPor(Usuario usuario) {
         if (bicicletas == null || bicicletas.esVacia()) return null;
 
@@ -445,40 +444,40 @@ public class Sistema implements IObligatorio {
         }
         }
 
-        @Override
-        public Retorno deshacerUltimosRetiros(int n) {
+    @Override
+    public Retorno deshacerUltimosRetiros(int n) {
             
-            if (n <= 0) {
-                return Retorno.error1();
+        if (n <= 0) {
+            return Retorno.error1();
+        }
+
+        // Si no hay historial, no hay nada para deshacer
+        if (pilaUltimosAlquileres == null || pilaUltimosAlquileres.esVacia()) {
+            return Retorno.ok("");
+        }
+
+        String resultado = "";//va acumulando resultados
+        int deshechos = 0;//cuenta los retiros deshechos
+            
+        //es con pila porque el ultimo que se hizo se deshace primero
+        while (deshechos < n && !pilaUltimosAlquileres.esVacia()) {
+            Alquiler alq = pilaUltimosAlquileres.desapilar();
+            if (alq == null) {
+                break;
             }
 
-            // Si no hay historial, no hay nada para deshacer
-            if (pilaUltimosAlquileres == null || pilaUltimosAlquileres.esVacia()) {
-                return Retorno.ok("");
+            Bicicleta b = alq.getBicicleta();
+            Usuario  u = alq.getUsuario();
+            Estacion origen = alq.getEstacionOrigen();
+
+            // Validación por seguridad
+            if (b == null || u == null || origen == null) {
+                continue;
             }
 
-            String resultado = "";//va acumulando resultados
-            int deshechos = 0;//cuenta los retiros deshechos
-            
-            //es con pila porque el ultimo que se hizo se deshace primero
-            while (deshechos < n && !pilaUltimosAlquileres.esVacia()) {
-                Alquiler alq = pilaUltimosAlquileres.desapilar();
-                if (alq == null) {
-                    break;
-                }
-
-                Bicicleta b = alq.getBicicleta();
-                Usuario  u = alq.getUsuario();
-                Estacion origen = alq.getEstacionOrigen();
-
-                // Validación por seguridad
-                if (b == null || u == null || origen == null) {
-                    continue;
-                }
-
-                //se revierte alquiler de la bicicleta
-                b.setUsuario(null);
-                b.setEstado("DISPONIBLE");
+           //se revierte alquiler de la bicicleta
+            b.setUsuario(null);
+            b.setEstado("DISPONIBLE");
 
                 // Si la bici estuviera listada en otra estación, removerla
                 Estacion actual = b.getEstacion();
@@ -535,8 +534,8 @@ public class Sistema implements IObligatorio {
 
         // ---------------------- LISTADOS Y REPORTES ----------------------
 
-        @Override
-        public Retorno obtenerUsuario(String cedula) {
+    @Override
+    public Retorno obtenerUsuario(String cedula) {
 
             if (cedula == null || cedula.trim().isEmpty()){
                 return Retorno.error1(); 
@@ -557,6 +556,7 @@ public class Sistema implements IObligatorio {
             String datosUsuario = usu.getNombre() + "#" + usu.getCedula();
             return Retorno.ok(datosUsuario);
     }
+    
     @Override
     public Retorno listarUsuarios() {
         if(this.usuarios == null || this.usuarios.esVacia())
@@ -609,7 +609,6 @@ public class Sistema implements IObligatorio {
         return Retorno.ok(resultado);
     }
 
-    
     @Override
     public Retorno informaciónMapa(String[][] mapa) {
 
@@ -810,7 +809,6 @@ public class Sistema implements IObligatorio {
             if (estado.equalsIgnoreCase("DISPONIBLE")) contador++;
         }
     }
-    
     return contador;
 }
 
@@ -819,7 +817,7 @@ public class Sistema implements IObligatorio {
     public Retorno ocupacionPromedioXBarrio() {
         return Retorno.noImplementada();
     }
-
+    
     @Override
     public Retorno rankingTiposPorUso() {
         return Retorno.noImplementada();
@@ -890,6 +888,61 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno usuarioMayor() {
-        return Retorno.noImplementada();
-    }
+        PilaSE<Alquiler> pilaAux = new PilaSE<>();
+       
+        int cantUsuarios = usuarios.getCantidadElementos();
+        int[] contadorDeUsuario = new int[cantUsuarios];
+        
+        while (!pilaUltimosAlquileres.esVacia()) {
+            
+            Alquiler alquiler = pilaUltimosAlquileres.desapilar();
+            pilaAux.apilar(alquiler);
+
+            if (alquiler != null && alquiler.getUsuario() != null) {
+                
+                // buscar indice del usuario en la lista
+                for (int i = 0; i < cantUsuarios; i++) {
+                    Usuario usuario = usuarios.obtenerElementoPorIndice(i);
+                    
+                    if (usuario != null && usuario.equals(alquiler.getUsuario())) {
+                        contadorDeUsuario[i]++;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // restaurar pila original
+        while (!pilaAux.esVacia()) {
+            pilaUltimosAlquileres.apilar(pilaAux.desapilar());
+        }
+        
+        int mayorCantAlquileres = 0;
+        Usuario usuarioGanador = null;
+         
+        for (int i = 0; i < cantUsuarios; i++) {
+            if (contadorDeUsuario[i] > mayorCantAlquileres) {
+                mayorCantAlquileres = contadorDeUsuario[i];
+                usuarioGanador = usuarios.obtenerElementoPorIndice(i);
+            } 
+            
+            //si la cantidad de alquileres del usuario pasando por el FOR es igual al que actualmente tiene mas alquileres
+            //gana el que tiene la cedula mas chica
+            else if (contadorDeUsuario[i] == mayorCantAlquileres && contadorDeUsuario[i] > 0) {
+                
+                Usuario actual = usuarios.obtenerElementoPorIndice(i);
+                if (actual != null && usuarioGanador != null) {
+                    if (actual.getCedula().compareTo(usuarioGanador.getCedula()) < 0) {
+                        usuarioGanador = actual;
+                    }
+                }
+            }
+        }
+        
+         // si no se encontró ningún usuario con alquileres
+          if (usuarioGanador == null || mayorCantAlquileres == 0)  return Retorno.ok("");
+          
+          // si no, retorno el ganador
+          return Retorno.ok(usuarioGanador.getCedula());
 }
+    }
