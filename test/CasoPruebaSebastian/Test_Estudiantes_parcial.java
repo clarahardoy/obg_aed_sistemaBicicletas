@@ -253,7 +253,7 @@ public class Test_Estudiantes_parcial {
             {"", "", "", ""} // fila 2: 0
         };
 
-        retorno = s.informaciónMapa(mapa);
+        retorno = s.informacionMapa(mapa);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertTrue(retorno.getValorString().startsWith("2#ambas"));
         assertTrue(retorno.getValorString().endsWith("|no existe"));

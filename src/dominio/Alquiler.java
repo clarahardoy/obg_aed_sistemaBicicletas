@@ -5,6 +5,8 @@ import java.util.Objects;
 
 
 public class Alquiler implements Comparable<Alquiler> {
+    private static long SEQ = 1;
+
     private String id;
     public Usuario usuario;
     public Bicicleta bicicleta; 
@@ -12,7 +14,7 @@ public class Alquiler implements Comparable<Alquiler> {
     public boolean activo; 
     
      public Alquiler( Usuario usuario, Bicicleta bicicleta, Estacion estacionOrigen) {
-        this.id = "";
+        this.id = String.valueOf(SEQ++);
         this.usuario = usuario;
         this.bicicleta = bicicleta;
         this.estacionOrigen = estacionOrigen;
@@ -51,23 +53,15 @@ public class Alquiler implements Comparable<Alquiler> {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        return hash;
+        return (id == null) ? 0 : id.hashCode();
     }
     
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Alquiler other = (Alquiler) obj;
+        if (this == obj) return true;
+        if (!(obj instanceof Alquiler)) return false;
+        Alquiler other = (Alquiler) obj;
         return Objects.equals(this.id, other.id);
     }
     
@@ -75,9 +69,10 @@ public class Alquiler implements Comparable<Alquiler> {
     @Override
     public int compareTo(Alquiler obj) {
         if (obj == null) return 1;
-        String a = (this.id == null) ? "" : this.id.trim();
-        String b = (obj.id == null) ? "" : obj.id.trim();
-        return a.compareToIgnoreCase(b);
+     
+        long a = (this.id == null || this.id.isBlank()) ? 0L : Long.parseLong(this.id.trim());
+        long b = (obj.id == null || obj.id.isBlank()) ? 0L : Long.parseLong(obj.id.trim());
+        return Long.compare(a, b);
     }
     
 }

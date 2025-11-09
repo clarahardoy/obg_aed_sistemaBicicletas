@@ -28,7 +28,7 @@ public class Test3_04InformacionMapa {
             {o   ,o,o   ,"E7",o   ,o   ,o},
             {o   ,o,o   ,"E4",o   ,o   ,o},
         };
-        Retorno r = s.informaciónMapa(mapa);
+        Retorno r = s.informacionMapa(mapa);
         assertEquals(Retorno.Resultado.OK, r.getResultado());
         assertEquals("3#columna|existe", r.getValorString());
     }
@@ -46,7 +46,7 @@ public class Test3_04InformacionMapa {
             {o   ,o,o   ,o   ,o,o   ,o},
             {o   ,o,o   ,"E4",o,o   ,o},
         };
-        Retorno r = s.informaciónMapa(mapa);
+        Retorno r = s.informacionMapa(mapa);
         assertEquals("2#ambas|existe", r.getValorString());
     }
 
@@ -63,7 +63,7 @@ public class Test3_04InformacionMapa {
             {o   ,"E7",o,o   ,o   ,o   ,o},
             {o   ,o   ,o,"E4",o   ,o   ,o},
         };
-        Retorno r = s.informaciónMapa(mapa);
+        Retorno r = s.informacionMapa(mapa);
         assertEquals("2#ambas|no existe", r.getValorString());
     }
     
@@ -75,23 +75,23 @@ public class Test3_04InformacionMapa {
             {o,  "E3",  o,  "E4"},
             {o,    o,  "E5", "E6"},
         };
-        Retorno r = s.informaciónMapa(mapa);
+        Retorno r = s.informacionMapa(mapa);
         assertEquals("3#columna|no existe", r.getValorString());
     }
     
     @Test //ok
     public void mapaNull() {
-        assertEquals("0#ambas|no existe", s.informaciónMapa(null).getValorString());
+        assertEquals("0#ambas|no existe", s.informacionMapa(null).getValorString());
     }
 
     @Test //ok
     public void matrizVacia_0x0() {
-        assertEquals("0#ambas|no existe", s.informaciónMapa(new String[0][0]).getValorString());
+        assertEquals("0#ambas|no existe", s.informacionMapa(new String[0][0]).getValorString());
     }
 
     @Test //ok
     public void matrizConFilaVacia() {
-        assertEquals("0#ambas|no existe", s.informaciónMapa(new String[][] { {} }).getValorString());
+        assertEquals("0#ambas|no existe", s.informacionMapa(new String[][] { {} }).getValorString());
     }
 
     @Test //NO PASA
@@ -101,7 +101,7 @@ public class Test3_04InformacionMapa {
             {o,o,o},
             {o,o,o}
         };
-        assertEquals("0#ambas|no existe", s.informaciónMapa(m).getValorString());
+        assertEquals("0#ambas|no existe", s.informacionMapa(m).getValorString());
     }
 
     @Test //NO PASA
@@ -111,7 +111,7 @@ public class Test3_04InformacionMapa {
             {"o"},
             {"E2"}
         }; 
-        assertEquals("2#columna|no existe", s.informaciónMapa(m).getValorString());
+        assertEquals("2#columna|no existe", s.informacionMapa(m).getValorString());
     }
 
     @Test //NO PASA
@@ -122,7 +122,7 @@ public class Test3_04InformacionMapa {
             {o   ,"E2"},
             {o   ,o    }
         }; 
-        assertEquals("1#ambas|no existe", s.informaciónMapa(m).getValorString());
+        assertEquals("1#ambas|no existe", s.informacionMapa(m).getValorString());
     }
 
     @Test //NO PASA
@@ -133,7 +133,7 @@ public class Test3_04InformacionMapa {
             {o,   o,  "E2"},
             {o,   o,  "E3"}
         }; 
-        assertEquals("2#columna|existe", s.informaciónMapa(m).getValorString());
+        assertEquals("2#columna|existe", s.informacionMapa(m).getValorString());
     }
 
     @Test //NO PASA
@@ -144,7 +144,7 @@ public class Test3_04InformacionMapa {
             {  o ,   o , "E3"},
             {  o ,   o ,  o }
         }; 
-        assertEquals("2#fila|no existe", s.informaciónMapa(m).getValorString());
+        assertEquals("2#fila|no existe", s.informacionMapa(m).getValorString());
     }
     
     @Test //ok
@@ -154,7 +154,7 @@ public class Test3_04InformacionMapa {
             {"E1","E2","E3"},
             {  o ,  o ,  o  }
         }; 
-        assertEquals("3#fila|no existe", s.informaciónMapa(m).getValorString());
+        assertEquals("3#fila|no existe", s.informacionMapa(m).getValorString());
     }
 
     @Test //ok
@@ -165,7 +165,7 @@ public class Test3_04InformacionMapa {
             {"E2",o},
             {"E3",o}
         }; 
-        assertEquals("3#columna|no existe", s.informaciónMapa(m).getValorString());
+        assertEquals("3#columna|no existe", s.informacionMapa(m).getValorString());
     }
 
     @Test //NO PASA
@@ -176,7 +176,7 @@ public class Test3_04InformacionMapa {
             {  o ,  o , "E3"},
             {  o ,  o , "E4"}
         }; 
-        assertEquals("2#ambas|no existe", s.informaciónMapa(m2).getValorString());
+        assertEquals("2#ambas|no existe", s.informacionMapa(m2).getValorString());
     }
 
     @Test //NO PASA
@@ -186,7 +186,7 @@ public class Test3_04InformacionMapa {
             {" o ",  " e2 ", "o"},
             {" o ",   " o ", " e3 "}
         }; 
-        assertEquals("1#ambas|no existe", s.informaciónMapa(m).getValorString());
+        assertEquals("1#ambas|no existe", s.informacionMapa(m).getValorString());
     }
 
     @Test //NO PASA
@@ -197,7 +197,7 @@ public class Test3_04InformacionMapa {
             { o ,   o , "E4", "E5"},
             { o ,   o ,   o , "E6"},
         };
-        assertEquals("3#ambas|existe", s.informaciónMapa(m).getValorString());
+        assertEquals("3#ambas|existe", s.informacionMapa(m).getValorString());
     }
     
 }

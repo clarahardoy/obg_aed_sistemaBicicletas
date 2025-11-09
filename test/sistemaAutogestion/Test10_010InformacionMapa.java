@@ -16,7 +16,7 @@ public class Test10_010InformacionMapa {
     
     @Test
     public void informacionMapaOkNull() {
-        retorno = s.informaciónMapa(null);
+        retorno = s.informacionMapa(null);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("0#ambas|no existe", retorno.getValorString());
     }
@@ -24,7 +24,7 @@ public class Test10_010InformacionMapa {
     @Test
     public void informacionMapaOkSinFilas() {
         String[][] mapa = new String[0][0];
-        retorno  = s.informaciónMapa(mapa);
+        retorno  = s.informacionMapa(mapa);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("0#ambas|no existe", retorno.getValorString());
     }
@@ -32,7 +32,7 @@ public class Test10_010InformacionMapa {
     @Test
     public void informacionMapaOkFilasSinColumnas() {
         String[][] mapa = new String[][] { {}, {}, {} };
-        retorno  = s.informaciónMapa(mapa);
+        retorno  = s.informacionMapa(mapa);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("0#ambas|no existe", retorno.getValorString());
     }
@@ -44,7 +44,7 @@ public class Test10_010InformacionMapa {
             { null, "E2",  "E3"  },
             { null, null, "E4"  }
         };
-        retorno  = s.informaciónMapa(mapa);
+        retorno  = s.informacionMapa(mapa);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("2#ambas|no existe", retorno.getValorString());
     }
@@ -56,7 +56,7 @@ public class Test10_010InformacionMapa {
             { null, "E2",  "E4" },
             { null, null, null }
         };
-        retorno  = s.informaciónMapa(mapa);
+        retorno  = s.informacionMapa(mapa);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("2#ambas|existe", retorno.getValorString());
     }
@@ -68,7 +68,7 @@ public class Test10_010InformacionMapa {
             { null, "E5", "E4", null },
             { null, null, "E6", null }
         };
-        retorno  = s.informaciónMapa(mapa);
+        retorno  = s.informacionMapa(mapa);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("3#columna|no existe", retorno.getValorString());
     }
@@ -81,7 +81,7 @@ public class Test10_010InformacionMapa {
             { "E2", null, "E3", "" }
         };
 
-        retorno  = s.informaciónMapa(mapa);
+        retorno  = s.informacionMapa(mapa);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("2#ambas|no existe", retorno.getValorString());
     }
@@ -93,7 +93,7 @@ public class Test10_010InformacionMapa {
             { null, "E2" }
         };
 
-        retorno  = s.informaciónMapa(mapa);
+        retorno  = s.informacionMapa(mapa);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("1#ambas|no existe", retorno.getValorString());
     }

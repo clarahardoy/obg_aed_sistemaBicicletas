@@ -586,31 +586,42 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno listarBicisEnDeposito() {
-
-        if(this.bicicletas == null || this.bicicletas.esVacia())
+        if (this.bicicletas == null || this.bicicletas.esVacia()) {
             return Retorno.ok("");
-        
-        String resultado = "";
-        int cantidadBicis = this.bicicletas.getCantidadElementos();
-        
-        for(int i = 0; i< cantidadBicis; i++){
-            Bicicleta b = this.bicicletas.obtenerElementoPorIndice(i);
-            if(b != null){
-                String ubi = b.getUbicacion();
-                if(ubi != null && "DEPOSITO".equalsIgnoreCase(ubi)){
-                    
-                    String item = b.getCodigo() + "#" + b.getTipo() + "#" + b.formatearEstado(b.getEstado());
-                    
-                    if(resultado.isEmpty()) resultado = item;
-                    else resultado = resultado + "|" + item;
-                }
-            }
         }
+        String resultado = listarDepositoRec(0, this.bicicletas.getCantidadElementos());
         return Retorno.ok(resultado);
     }
 
+    private String listarDepositoRec(int i, int total) {
+        if (i >= total) {//cuando se pasa del ultimo indice muestra "" para que no muestre separadores extra
+            return "";
+        }
+
+        Bicicleta b = this.bicicletas.obtenerElementoPorIndice(i);
+        //si esta en deposito, muestra la concatenacion, sino ""
+        //es donde esta parado
+        String actual = "";
+        if (b != null) {
+            String ubi = b.getUbicacion();
+            if (ubi != null && "DEPOSITO".equalsIgnoreCase(ubi)) {
+                actual = b.getCodigo() + "#" + b.getTipo() + "#" + b.formatearEstado(b.getEstado());
+            }
+        }
+        //procesa todo lo que viene despues, de i+1 hasta el final
+        String resto = listarDepositoRec(i + 1, total);
+
+        if (actual.isEmpty()) {//si no hay nada en actual se devuelve resto
+            return resto;
+        } else if (resto.isEmpty()) {//si lo que le sigue esta vacio se devuelve actual
+            return actual;
+        } else {
+            return actual + "|" + resto;//si hay en ambos, se unen con |
+        }
+    }
+
     @Override
-    public Retorno informaciónMapa(String[][] mapa) {
+    public Retorno informacionMapa(String[][] mapa) {
 
          // Caso vacío o nulo 
         if (mapa == null || mapa.length == 0) {

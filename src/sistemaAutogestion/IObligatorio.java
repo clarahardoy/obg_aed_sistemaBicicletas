@@ -37,7 +37,7 @@ public interface IObligatorio {
     
     Retorno listarBicisEnDeposito();
     
-    Retorno informaciónMapa(String [][] mapa);
+    Retorno informacionMapa(String [][] mapa);
     
     Retorno listarBicicletasDeEstacion(String nombreEstacion);    
     

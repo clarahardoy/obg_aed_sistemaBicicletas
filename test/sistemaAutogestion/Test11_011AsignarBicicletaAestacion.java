@@ -1,101 +1,197 @@
 
 package sistemaAutogestion;
 
-
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-
-
 public class Test11_011AsignarBicicletaAestacion {
-     private Retorno retorno;
+
+    private Retorno retorno;
     private final IObligatorio s = new Sistema();
 
     @Before
     public void setUp() {
         s.crearSistemaDeGestion();
     }
-    
-    @Test
-    public void DatosFaltantes() {
 
-        retorno = s.asignarBicicletaAEstacion(null, "Central");
+    // OK desde depósito a estación con lugar
+    @Test
+    public void asignarBicicletaAEstacionOk() {
+        retorno = s.registrarEstacion("E1", "Centro", 2);
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.registrarBicicleta("ABC123", "URBANA");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.asignarBicicletaAEstacion("ABC123", "E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        // debe quedar anclada en E1
+        retorno = s.listarBicicletasDeEstacion("E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+        assertEquals("ABC123", retorno.getValorString());
+
+        // y no figurar en depósito
+        retorno = s.listarBicisEnDeposito();
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+        assertEquals("", retorno.getValorString());
+    }
+
+
+    @Test
+    public void asignarBicicletaAEstacionError01() {
+        retorno = s.asignarBicicletaAEstacion(null, "E1");
         assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
 
-        retorno = s.asignarBicicletaAEstacion("AAA123", null);
+        retorno = s.asignarBicicletaAEstacion("", "E1");
         assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
 
-        retorno = s.asignarBicicletaAEstacion("", "Central");
+        retorno = s.asignarBicicletaAEstacion("ABC123", null);
         assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
 
-        retorno = s.asignarBicicletaAEstacion("AAA123", "   ");
+        retorno = s.asignarBicicletaAEstacion("ABC123", "");
         assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
     }
-    
+
+
     @Test
-    public void BiciNoExiste() {
-        s.registrarEstacion("Central", "Centro", 2);
+    public void asignarBicicletaAEstacionError02_biciInexistente() {
+        retorno = s.registrarEstacion("E1", "Centro", 2);
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
 
-        Retorno r = s.asignarBicicletaAEstacion("ZZZ999", "Central");
-        assertEquals(Retorno.Resultado.ERROR_2, r.getResultado());
+        retorno = s.asignarBicicletaAEstacion("ZZZ999", "E1");
+        assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
     }
-    
+
+
     @Test
-    public void BiciNoDisponible() {
-        s.registrarEstacion("Central", "Centro", 2);
-        s.registrarBicicleta("AAA123", "URBANA");
-        // Dejarla NO disponible
-        s.marcarEnMantenimiento("AAA123", "service");
+    public void asignarBicicletaAEstacionError03_estacionInexistente() {
+        retorno = s.registrarBicicleta("ABC123", "URBANA");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
 
-        Retorno r = s.asignarBicicletaAEstacion("AAA123", "Central");
-        assertEquals(Retorno.Resultado.ERROR_2, r.getResultado());
+        retorno = s.asignarBicicletaAEstacion("ABC123", "NOEXISTE");
+        assertEquals(Retorno.Resultado.ERROR_3, retorno.getResultado());
     }
-    
+
+
     @Test
-    public void EstacionNoExiste() {
-        s.registrarBicicleta("AAA123", "URBANA");
+    public void asignarBicicletaAEstacionError04_sinLugar() {
+        retorno = s.registrarEstacion("E1", "Centro", 1);
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
 
-        Retorno r = s.asignarBicicletaAEstacion("AAA123", "Fantasia");
-        assertEquals(Retorno.Resultado.ERROR_3, r.getResultado());
+        retorno = s.registrarBicicleta("AAA111", "URBANA");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.registrarBicicleta("BBB222", "URBANA");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        // llena la estación con la primera
+        retorno = s.asignarBicicletaAEstacion("AAA111", "E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        // la segunda no entra
+        retorno = s.asignarBicicletaAEstacion("BBB222", "E1");
+        assertEquals(Retorno.Resultado.ERROR_4, retorno.getResultado());
+
+        // verificar que sólo está AAA111
+        retorno = s.listarBicicletasDeEstacion("E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+        assertEquals("AAA111", retorno.getValorString());
     }
-    
+
+
     @Test
-    public void EstacionLlena() {
-        s.registrarEstacion("Chica", "Centro", 1);
-        s.registrarBicicleta("AAA123", "URBANA");
-        s.registrarBicicleta("BBB111", "MOUNTAIN");
+    public void asignarBicicletaAEstacionError02_biciNoDisponible_mantenimiento() {
+        retorno = s.registrarEstacion("E1", "Centro", 2);
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
 
-        // Lleno la estación con la primera
-        assertEquals(Retorno.Resultado.OK,
-                s.asignarBicicletaAEstacion("AAA123", "Chica").getResultado());
+        retorno = s.registrarBicicleta("ABC123", "URBANA");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
 
-        // Intento asignar otra a la misma (sin lugar)
-        Retorno r = s.asignarBicicletaAEstacion("BBB111", "Chica");
-        assertEquals(Retorno.Resultado.ERROR_4, r.getResultado());
+        retorno = s.marcarEnMantenimiento("ABC123", "ruido");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.asignarBicicletaAEstacion("ABC123", "E1");
+        assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+
+        // no debe aparecer anclada
+        retorno = s.listarBicicletasDeEstacion("E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+        assertEquals("", retorno.getValorString());
     }
-    
-//    @Test
-//    public void asignar_Ok_DesdeDeposito() throws Exception {
-//        s.registrarEstacion("Central", "Centro", 2);
-//        s.registrarBicicleta("AAA123", "URBANA");
-//
-//        Retorno r = s.asignarBicicletaAEstacion("AAA123", "Central");
-//        assertEquals(Retorno.Resultado.OK, r.getResultado());
-//
-//        // Verificaciones: la bici está en ESTACION "Central"
-//        Bicicleta b = getBici("AAA123");
-//        assertNotNull(b);
-//        assertEquals("ESTACION", b.getUbicacion());
-//        assertNotNull(b.getEstacion());
-//        assertEquals("Central", b.getEstacion().getNombre());
-//
-//        // Y la estación la tiene anclada
-//        ListaSE<Bicicleta> listaCentral = getListaBicisEstacion("Central");
-//        assertEquals(1, listaCentral.getCantidadElementos());
-//        assertSame(b, listaCentral.obtenerElementoPorIndice(0));
-//    }
-    
 
 
+    @Test
+    public void asignarBicicletaAEstacionError02_biciNoDisponible_alquilada() {
+        retorno = s.registrarEstacion("E1", "Centro", 1);
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.registrarEstacion("E2", "Centro", 1);
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.registrarUsuario("11111111", "U1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.registrarBicicleta("ABC123", "URBANA");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.asignarBicicletaAEstacion("ABC123", "E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.alquilarBicicleta("11111111", "E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        // intentar mover alquilada
+        retorno = s.asignarBicicletaAEstacion("ABC123", "E2");
+        assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+    }
+
+
+    @Test
+    public void asignarBicicletaAEstacionOk_moverEntreEstaciones() {
+        retorno = s.registrarEstacion("E1", "Centro", 2);
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.registrarEstacion("E2", "Cordon", 2);
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.registrarBicicleta("ABC123", "URBANA");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.asignarBicicletaAEstacion("ABC123", "E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.asignarBicicletaAEstacion("ABC123", "E2");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.listarBicicletasDeEstacion("E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+        assertEquals("", retorno.getValorString());
+
+        retorno = s.listarBicicletasDeEstacion("E2");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+        assertEquals("ABC123", retorno.getValorString());
+    }
+
+
+    @Test
+    public void asignarBicicletaAEstacionOk_mismaEstacion_noDuplica() {
+        retorno = s.registrarEstacion("E1", "Centro", 2);
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.registrarBicicleta("ABC123", "URBANA");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.asignarBicicletaAEstacion("ABC123", "E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+
+        retorno = s.asignarBicicletaAEstacion("ABC123", "E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+
+        retorno = s.listarBicicletasDeEstacion("E1");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
+        assertEquals("ABC123", retorno.getValorString());
+    }
 }
