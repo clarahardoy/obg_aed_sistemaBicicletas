@@ -33,6 +33,24 @@ public class PilaSE<T extends Comparable<T>> implements IPila<T> {
     @Override
     public T getTope() {
         return tope != null ? tope.getDato() : null; 
-    }   
+    }  
+    
+    @Override
+    public PilaSE copiarPila() {
+        PilaSE<T> copia = new PilaSE<>();
+        PilaSE<T> invertida = new PilaSE<>();
+
+        while (!this.esVacia()) {
+            invertida.apilar(this.desapilar());
+        }
+
+        while (!(invertida.esVacia())) {
+            T dato = invertida.desapilar();
+            copia.apilar(dato);
+            this.apilar(dato);
+        }
+
+        return copia;
+    }
 }
 

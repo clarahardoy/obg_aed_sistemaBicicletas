@@ -172,11 +172,13 @@ public class Sistema implements IObligatorio {
     @Override
     public Retorno eliminarEstacion(String nombre) {
         
-        if (nombre == null || nombre.isEmpty()){
+        if (nombre == null || nombre.isEmpty() || nombre.isBlank()){
         return Retorno.error1();
         }
+        
+        String nombreLimpio = nombre.trim();
          
-        Estacion estacionABuscar = new Estacion(nombre, "", 0);
+        Estacion estacionABuscar = new Estacion(nombreLimpio, "", 0);
         Estacion estacion = this.estaciones.obtenerElemento(estacionABuscar);
         if (estacion == null) return Retorno.error2(); 
         
@@ -220,7 +222,7 @@ public class Sistema implements IObligatorio {
             return Retorno.error3(); // estación no existe
         }
         
-        //si ya esta en la misma estacion no se hace nada, esta ok
+        //si ya esta en la misma estacion no se hace nada, esta okegi
         if (bici.getEstacion() != null && bici.getEstacion().equals(destino)) {
         bici.setUbicacion("ESTACION"); 
         return Retorno.ok();
@@ -239,17 +241,39 @@ public class Sistema implements IObligatorio {
         if (origen != null && origen.getBicicletas() != null) {
             origen.getBicicletas().eliminar(bici);
         }
-        //se ancla la bicci en la estacion destino
+        
+        // chequear si hay usuarios esperando alquiler
+        if (destino.getColaEsperaAlquiler() != null && 
+        !destino.getColaEsperaAlquiler().esVacia()) {
+        
+            // si hay usuarios esperando: entregar bici al primero
+            Usuario usuarioEsperando = destino.getColaEsperaAlquiler().desencolar();
+
+            if (usuarioEsperando != null) {
+                bici.setEstado("ALQUILADA");
+                bici.setUbicacion("EN USO");
+                bici.setUsuario(usuarioEsperando);
+                bici.setEstacion(null);
+
+                // registrarla en la pila de alquileres
+                if (pilaUltimosAlquileres != null) {
+                    pilaUltimosAlquileres.apilar(new Alquiler(usuarioEsperando, bici, destino));
+                }
+
+                return Retorno.ok();
+             }
+        }
+    
+        // si NO hay usuarios esperando ahi si se ancla normal
         if (destino.getBicicletas() != null) {
-        destino.getBicicletas().agregarAlFinal(bici);
+            destino.getBicicletas().agregarAlFinal(bici);
         }
         bici.setEstacion(destino);
         bici.setUbicacion("ESTACION");
-        // estado se mantiene "DISPONIBLE"
+        bici.setEstado("DISPONIBLE");
 
         return Retorno.ok();
-        
-    }
+}
     
     private Usuario buscarUsuario(String ci) {
         if (usuarios == null || usuarios.esVacia()) return null;
@@ -333,17 +357,25 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno devolverBicicleta(String cedula, String nombreEstacionDestino) {
-        if (cedula == null || nombreEstacionDestino == null) return Retorno.error1();
+        if (cedula == null || cedula.isBlank() || cedula.isEmpty() 
+            || nombreEstacionDestino == null || nombreEstacionDestino.isEmpty() 
+            || nombreEstacionDestino.isBlank()) { 
+            
+        return Retorno.error1();
+        }
+        
+        String cedulaLimpia = cedula.trim();
+        String nombreEstacionDestinoLimpia = nombreEstacionDestino.trim();
             
         // buscar usuario
-        Usuario usuarioBuscado = usuarios.obtenerElemento(new Usuario(cedula, ""));
+        Usuario usuarioBuscado = usuarios.obtenerElemento(new Usuario(cedulaLimpia, ""));
         if (usuarioBuscado == null) return Retorno.error2(); //usuario inexistente
             
         Bicicleta bici = buscarBicicletaAlquiladaPor(usuarioBuscado);
         if (bici == null) return Retorno.error2(); // wl usuario no tiene bici alquilada
               
         // buscar estacion
-        Estacion estacionBuscada = estaciones.obtenerElemento(new Estacion(nombreEstacionDestino, "", 0));
+        Estacion estacionBuscada = estaciones.obtenerElemento(new Estacion(nombreEstacionDestinoLimpia, "", 0));
         if (estacionBuscada == null) return Retorno.error3(); //estacion inexistente
             
         // si todo lo anterior ok, marcar alquiler como finalizado           
@@ -785,7 +817,7 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno estacionesConDisponibilidad(int n) {
-        if (n <= 1) return Retorno.error1(); 
+        if (n < 1) return Retorno.error1(); 
         
         
     int contadorEstaciones = 0; 
@@ -826,13 +858,141 @@ public class Sistema implements IObligatorio {
     
     @Override
     public Retorno ocupacionPromedioXBarrio() {
-        return Retorno.noImplementada();
+        if (estaciones == null || estaciones.esVacia()) {
+        return Retorno.ok("");
+        }
+        
+        ListaSE<String> resultadosOrdenados = new ListaSE<>();
+        ListaSE<String> barriosProcesados = new ListaSE<>();
+        
+        int cantEstaciones = estaciones.getCantidadElementos();
+        
+        // ir recorriendo las estaciones y agrupar por barrio 
+        for (int i = 0; i < cantEstaciones; i++) {
+        Estacion est = estaciones.obtenerElementoPorIndice(i);
+        
+        if (est != null && est.getBarrio() != null) {
+            String barrio = est.getBarrio().trim();
+            
+            // si el barrio ya fue procesado, se saltea
+            if (!barrio.isEmpty() && !barriosProcesados.existeElemento(barrio)) {
+                barriosProcesados.agregarAlFinal(barrio);
+                
+                // calcular datos para el barrio si no fue procesado todavia
+                int capacidadTotal = 0;
+                int bicisAncladas = 0;
+                
+                for (int j = 0; j < cantEstaciones; j++) {
+                    Estacion e = estaciones.obtenerElementoPorIndice(j);
+                    
+                    if (e != null && e.getBarrio() != null && 
+                        e.getBarrio().trim().equalsIgnoreCase(barrio)) {
+                        
+                        capacidadTotal += e.getCapacidad();
+                        
+                        if (e.getBicicletas() != null) {
+                            bicisAncladas += e.getBicicletas().getCantidadElementos();
+                        }
+                    }
+                }
+                
+                int porcentaje = 0;
+                if (capacidadTotal > 0) {
+                    double porc = (bicisAncladas * 100.0) / capacidadTotal;
+                    porcentaje = (int) Math.round(porc);
+                }
+                
+                // agregar ordenado alfabetico x barrio
+                String item = barrio + "#" + porcentaje;
+                resultadosOrdenados.adicionarOrdenado(item);
+            }
+        }
+    }
+        
+    String resultado = "";
+    int cantResultados = resultadosOrdenados.getCantidadElementos();
+
+    for (int i = 0; i < cantResultados; i++) {
+        String item = resultadosOrdenados.obtenerElementoPorIndice(i);
+
+        if (item != null) {
+            if (!resultado.isEmpty()) {
+                resultado += "|";
+            }
+            resultado += item;
+        }
+    }
+    
+    return Retorno.ok(resultado);
+        
     }
     
     @Override
     public Retorno rankingTiposPorUso() {
-        return Retorno.noImplementada();
-    }
+        if (pilaUltimosAlquileres == null || pilaUltimosAlquileres.esVacia()) {
+            return Retorno.ok("");
+        }
+    
+        // array para contar (orden alfabetico)
+        int[] contadores = new int[3];
+        String[] tipos = {"ELECTRICA", "MOUNTAIN", "URBANA"};
+
+        // copiar la pila para no modificarla
+        PilaSE<Alquiler> copia = pilaUltimosAlquileres.copiarPila();
+
+        // cuento por tipo
+        while (!copia.esVacia()) {
+            Alquiler alq = copia.desapilar();
+
+            if (alq != null && alq.getBicicleta() != null && alq.getBicicleta().getTipo() != null) {
+                String tipo = alq.getBicicleta().getTipo().trim().toUpperCase();
+
+                if (tipo.equals("ELECTRICA")) {
+                    contadores[0]++;
+                } else if (tipo.equals("MOUNTAIN")) {
+                    contadores[1]++;
+                } else if (tipo.equals("URBANA")) {
+                    contadores[2]++;
+                }
+            }
+        }
+    
+        // ordeno:
+        for (int i = 0; i < 3 - 1; i++) {
+            for (int j = 0; j < 3 - i - 1; j++) {
+                boolean intercambiarContadores = false;
+
+                // primero por cant descendente
+                if (contadores[j] < contadores[j + 1]) {
+                    intercambiarContadores = true;
+                }
+                // si son iguales, ya están en orden alfabetico
+
+                if (intercambiarContadores) {
+                    int tempCont = contadores[j];
+                    contadores[j] = contadores[j + 1];
+                    contadores[j + 1] = tempCont;
+
+                    String tempTipo = tipos[j];
+                    tipos[j] = tipos[j + 1];
+                    tipos[j + 1] = tempTipo;
+                }
+            }
+        }
+
+        String resultado = "";
+        for (int i = 0; i < 3; i++) {
+            if (contadores[i] > 0) {
+                if (!resultado.isEmpty()) {
+                    resultado += "|";
+                }
+                resultado += tipos[i] + "#" + contadores[i];
+            }
+        }
+
+    return Retorno.ok(resultado);
+ 
+}
 
     @Override
     public Retorno usuariosEnEspera(String nombreEstacion) {

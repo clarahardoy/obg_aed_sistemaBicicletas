@@ -11,5 +11,7 @@ public interface IPila<T> {
     public T getTope();
 
     public T desapilar();
+    
+    public PilaSE copiarPila();
    
 }
