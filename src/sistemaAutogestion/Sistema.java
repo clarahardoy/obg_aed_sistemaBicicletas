@@ -50,7 +50,6 @@ public class Sistema implements IObligatorio {
         
         estaciones.agregarAlFinal(e);
         return Retorno.ok();
-     
     }
 
     @Override
@@ -70,8 +69,7 @@ public class Sistema implements IObligatorio {
             return Retorno.error3();
         
         usuarios.agregarAlFinal(u);
-        return Retorno.ok();
-        
+        return Retorno.ok();     
     }
 
     @Override
@@ -100,8 +98,7 @@ public class Sistema implements IObligatorio {
        bicicletas.agregarAlFinal(b);
        //deposito.agregarAlFinal(b);
 
-       return Retorno.ok();
-       
+       return Retorno.ok();    
     }
 
     @Override
@@ -264,16 +261,14 @@ public class Sistema implements IObligatorio {
              }
         }
     
-        // si NO hay usuarios esperando ahi si se ancla normal
-        if (destino.getBicicletas() != null) {
-            destino.getBicicletas().agregarAlFinal(bici);
-        }
+        destino.anclarBicicletaOrdenada(bici);
+
         bici.setEstacion(destino);
         bici.setUbicacion("ESTACION");
         bici.setEstado("DISPONIBLE");
 
         return Retorno.ok();
-}
+    }
     
     private Usuario buscarUsuario(String ci) {
         if (usuarios == null || usuarios.esVacia()) return null;
@@ -409,9 +404,8 @@ public class Sistema implements IObligatorio {
             bici.setUsuario(null);
             bici.setEstacion(estacionBuscada);
 
-            if (estacionBuscada.getBicicletas() != null) {
-                    estacionBuscada.getBicicletas().agregarAlFinal(bici);
-                }
+            estacionBuscada.anclarBicicletaOrdenada(bici);
+
                 return Retorno.ok();
                 
             } else {
@@ -474,7 +468,7 @@ public class Sistema implements IObligatorio {
         while (!pilaAux.esVacia()) {
             pilaUltimosAlquileres.apilar(pilaAux.desapilar());
         }
-        }
+    }
 
     @Override
     public Retorno deshacerUltimosRetiros(int n) {
@@ -533,7 +527,7 @@ public class Sistema implements IObligatorio {
 
                     if (origen.getBicicletas() != null) {
                         if (!origen.getBicicletas().existeElemento(b)) {
-                            origen.getBicicletas().agregarAlFinal(b);
+                            origen.anclarBicicletaOrdenada(b);
                         }
                     }
                     b.setUbicacion("ESTACION");
@@ -764,7 +758,7 @@ public class Sistema implements IObligatorio {
             return Retorno.ok("");
         }
 
-        // Busca la estación por nombre
+            // Buscar la estación por nombre
         Estacion est;
         if (estaciones == null || estaciones.esVacia()) {
             est = null;
@@ -775,46 +769,34 @@ public class Sistema implements IObligatorio {
             return Retorno.ok("");
         }
 
-        // Si no tiene bicis, salida vacía o sea se ejecuto bien pero no hay para mostrar
+        // Si no tiene bicis, salida vacía 
         if (est.getBicicletas() == null || est.getBicicletas().esVacia()) {
             return Retorno.ok("");
         }
-        
-        //lista auxiliar ordenada
-        tads.ListaSE<String> codigosOrdenados = new tads.ListaSE<>();
 
+        // Una sola pasada por la lista de bicis de la estación (ya ordenada por código)
+        String resultado = "";
         int cantBici = est.getBicicletas().getCantidadElementos();
         int i = 0;
+
         while (i < cantBici) {
             Bicicleta bici = est.getBicicletas().obtenerElementoPorIndice(i);
             if (bici != null && bici.getCodigo() != null) {
                 String cod = bici.getCodigo().trim();
                 if (!cod.isEmpty()) {
-                    codigosOrdenados.adicionarOrdenado(cod); // se inserta en orden creciente
+                    if (resultado.isEmpty()) {
+                        resultado = cod;
+                    } else {
+                        resultado = resultado + "|" + cod;
+                    }
                 }
             }
-            i = i + 1; // adiciono a la variable
+            i = i + 1;
         }
 
-        // se arma el resultado
-        String resultado = "";
-        int cantCodOrd = codigosOrdenados.getCantidadElementos();
-        int j = 0;
-        while (j < cantCodOrd) {
-            String cod = codigosOrdenados.obtenerElementoPorIndice(j);
-            if (cod != null && !cod.isEmpty()) {
-                if (resultado.isEmpty()) {
-                    resultado = cod;
-                } else {
-                    resultado = resultado + "|" + cod;
-                }
-            }
-            j = j + 1;
-        }
-
-    return Retorno.ok(resultado);
-}
-
+        return Retorno.ok(resultado);
+    }
+    
     @Override
     public Retorno estacionesConDisponibilidad(int n) {
         if (n < 1) return Retorno.error1(); 
@@ -1115,5 +1097,5 @@ public class Sistema implements IObligatorio {
           
           // si no, retorno el ganador
           return Retorno.ok(usuarioGanador.getCedula());
-}
+        }
     }

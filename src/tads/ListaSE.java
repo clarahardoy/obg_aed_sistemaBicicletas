@@ -137,7 +137,7 @@ public class ListaSE<T extends Comparable<T>> implements IListaSimple<T> {
         return null;
     }
      
-      @Override
+    @Override
     public void adicionarOrdenado(T elem) {
         Nodo<T> nuevoNodo = new Nodo<>(elem, null);
 

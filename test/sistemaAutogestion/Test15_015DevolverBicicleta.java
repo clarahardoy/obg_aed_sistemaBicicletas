@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package sistemaAutogestion;
 
 import static org.junit.Assert.assertEquals;
@@ -9,10 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author clarahardoy
- */
 public class Test15_015DevolverBicicleta {
 
     private Retorno retorno;

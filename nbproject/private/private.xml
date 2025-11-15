@@ -2,6 +2,29 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/dominio/Alquiler.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/sistemaAutogestion/Sistema.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/sistemaAutogestion/Retorno.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/sistemaAutogestion/IObligatorio.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/tads/ColaSE.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/tads/ICola.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/tads/IListaSimple.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/tads/IPila.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/tads/ListaSE.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/tads/Nodo.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/tads/PilaSE.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/dominio/Bicicleta.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/dominio/Estacion.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/src/dominio/Usuario.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/test/CasoPruebaYanet/Test3_04InformacionMapa.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/test/sistemaAutogestion/Test10_010InformacionMapa.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/test/CasoPruebaSebastian/Test_Estudiantes_parcial.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/test/sistemaAutogestion/Test11_011AsignarBicicletaAestacion.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/test/sistemaAutogestion/Test6_06RepararBicicleta.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/test/sistemaAutogestion/Test12_012AlquilarBicicleta.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/test/sistemaAutogestion/Test13_013DeshacerUltimosRetiros.java</file>
+            <file>file:/C:/Users/lu-va/OneDrive/Escritorio/ORT%20Sem%204/Algoritmos/obg_aed_sistemaBicicletas/test/sistemaAutogestion/Test14_014UsuariosEnEspera.java</file>
+        </group>
     </open-files>
 </project-private>

@@ -51,5 +51,4 @@ public class ColaSE<T extends Comparable<T>> implements ICola<T> {
     public T getFondo(){
         return fondo != null ? fondo.getDato() : null;
     }
-    
 }

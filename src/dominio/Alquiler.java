@@ -41,7 +41,6 @@ public class Alquiler implements Comparable<Alquiler> {
         this.activo = activo;
     }
     
-
     public String getId() {
         return id;
     }
@@ -50,13 +49,11 @@ public class Alquiler implements Comparable<Alquiler> {
         return activo; 
     }
     
-
     @Override
     public int hashCode() {
         return (id == null) ? 0 : id.hashCode();
     }
     
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -65,7 +62,6 @@ public class Alquiler implements Comparable<Alquiler> {
         return Objects.equals(this.id, other.id);
     }
     
-  
     @Override
     public int compareTo(Alquiler obj) {
         if (obj == null) return 1;
@@ -73,6 +69,5 @@ public class Alquiler implements Comparable<Alquiler> {
         long a = (this.id == null || this.id.isBlank()) ? 0L : Long.parseLong(this.id.trim());
         long b = (obj.id == null || obj.id.isBlank()) ? 0L : Long.parseLong(obj.id.trim());
         return Long.compare(a, b);
-    }
-    
+    } 
 }

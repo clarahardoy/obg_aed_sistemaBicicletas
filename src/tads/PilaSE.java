@@ -13,8 +13,7 @@ public class PilaSE<T extends Comparable<T>> implements IPila<T> {
         Nodo<T> nodo_nuevo = new Nodo<>(dato); 
        
             nodo_nuevo.setSiguiente(tope);
-            tope = nodo_nuevo;
-            
+            tope = nodo_nuevo;        
     }
     
     @Override

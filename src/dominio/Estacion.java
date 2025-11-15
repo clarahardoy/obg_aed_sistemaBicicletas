@@ -81,6 +81,13 @@ public class Estacion implements Comparable<Estacion> {
         return getColaEsperaAlquiler() != null && !getColaEsperaAlquiler().esVacia();
     }
     
+    public void anclarBicicletaOrdenada(Bicicleta b) {
+        if (this.bicicletas == null) {
+            this.bicicletas = new ListaSE<>();
+        }
+        this.bicicletas.adicionarOrdenado(b);
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

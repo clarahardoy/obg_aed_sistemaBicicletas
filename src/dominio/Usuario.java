@@ -7,7 +7,6 @@ public class Usuario implements Comparable<Usuario> {
     private String cedula;
     private String nombre;
     
-    
     public Usuario(String cedula, String nombre){
         this.cedula = cedula;
         this.nombre = nombre;
