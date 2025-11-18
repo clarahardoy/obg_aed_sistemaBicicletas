@@ -750,23 +750,23 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno listarBicicletasDeEstacion(String nombreEstacion) {
-        if (nombreEstacion == null) {
-            return Retorno.ok("");
+        if (nombreEstacion == null || nombreEstacion.isBlank()) {
+            return Retorno.error1();
         }
         nombreEstacion = nombreEstacion.trim();
         if (nombreEstacion.isEmpty()) {
-            return Retorno.ok("");
+            return Retorno.error1();
         }
 
-            // Buscar la estación por nombre
-        Estacion est;
-        if (estaciones == null || estaciones.esVacia()) {
-            est = null;
-        } else {
+        // Busca la estación por nombre
+        Estacion est = null; 
+        if (estaciones != null || !estaciones.esVacia()) {
+
             est = estaciones.obtenerElemento(new Estacion(nombreEstacion, "", 0));
-        }
+        } 
+        
         if (est == null) {
-            return Retorno.ok("");
+            return Retorno.error2();
         }
 
         // Si no tiene bicis, salida vacía 
@@ -799,7 +799,7 @@ public class Sistema implements IObligatorio {
     
     @Override
     public Retorno estacionesConDisponibilidad(int n) {
-        if (n < 1) return Retorno.error1(); 
+        if (n <= 1) return Retorno.error1(); 
         
         
     int contadorEstaciones = 0; 
@@ -911,24 +911,20 @@ public class Sistema implements IObligatorio {
     
     @Override
     public Retorno rankingTiposPorUso() {
-        if (pilaUltimosAlquileres == null || pilaUltimosAlquileres.esVacia()) {
-            return Retorno.ok("");
-        }
-    
+
         // array para contar (orden alfabetico)
         int[] contadores = new int[3];
         String[] tipos = {"ELECTRICA", "MOUNTAIN", "URBANA"};
 
-        // copiar la pila para no modificarla
-        PilaSE<Alquiler> copia = pilaUltimosAlquileres.copiarPila();
-
-        // cuento por tipo
+    
+        // cuento por tip
+        if (pilaUltimosAlquileres != null && !pilaUltimosAlquileres.esVacia()) {
+        PilaSE<Alquiler> copia = pilaUltimosAlquileres.copiarPila(); // copiar pila para no modificarla
+        
         while (!copia.esVacia()) {
             Alquiler alq = copia.desapilar();
-
             if (alq != null && alq.getBicicleta() != null && alq.getBicicleta().getTipo() != null) {
                 String tipo = alq.getBicicleta().getTipo().trim().toUpperCase();
-
                 if (tipo.equals("ELECTRICA")) {
                     contadores[0]++;
                 } else if (tipo.equals("MOUNTAIN")) {
@@ -938,6 +934,7 @@ public class Sistema implements IObligatorio {
                 }
             }
         }
+    }
     
         // ordeno:
         for (int i = 0; i < 3 - 1; i++) {
@@ -963,17 +960,14 @@ public class Sistema implements IObligatorio {
         }
 
         String resultado = "";
-        for (int i = 0; i < 3; i++) {
-            if (contadores[i] > 0) {
-                if (!resultado.isEmpty()) {
-                    resultado += "|";
-                }
-                resultado += tipos[i] + "#" + contadores[i];
-            }
+    for (int i = 0; i < 3; i++) {
+        if (!resultado.isEmpty()) {
+            resultado += "|";
         }
-
+        resultado += tipos[i] + "#" + contadores[i];
+    }
+    
     return Retorno.ok(resultado);
- 
 }
 
     @Override

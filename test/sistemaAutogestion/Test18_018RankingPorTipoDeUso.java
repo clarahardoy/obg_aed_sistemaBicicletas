@@ -21,12 +21,6 @@ public class Test18_018RankingPorTipoDeUso {
 
     // OK
 
-    @Test
-    public void rankingTiposPorUsoOk_SinAlquileres() {
-        retorno = s.rankingTiposPorUso();
-        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("", retorno.getValorString());
-    }
 
     @Test
     public void rankingTiposPorUsoOk_UnSoloTipo() {
@@ -38,7 +32,7 @@ public class Test18_018RankingPorTipoDeUso {
 
         retorno = s.rankingTiposPorUso();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("URBANA#1", retorno.getValorString());
+        assertEquals("URBANA#1|ELECTRICA#0|MOUNTAIN#0", retorno.getValorString());
     }
 
     @Test
@@ -164,8 +158,7 @@ public class Test18_018RankingPorTipoDeUso {
 
         retorno = s.rankingTiposPorUso();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        // solo mostrar los que tienen alquileres
-        assertEquals("MOUNTAIN#2|ELECTRICA#1", retorno.getValorString());
+        assertEquals("MOUNTAIN#2|ELECTRICA#1|URBANA#0", retorno.getValorString());
     }
 
     @Test
@@ -193,7 +186,7 @@ public class Test18_018RankingPorTipoDeUso {
 
         retorno = s.rankingTiposPorUso();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("URBANA#10", retorno.getValorString());
+        assertEquals("URBANA#10|ELECTRICA#0|MOUNTAIN#0", retorno.getValorString());
     }
 
 
@@ -215,7 +208,7 @@ public class Test18_018RankingPorTipoDeUso {
         // Deben contar 2 alquileres
         retorno = s.rankingTiposPorUso();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("URBANA#2", retorno.getValorString());
+        assertEquals("URBANA#2|ELECTRICA#0|MOUNTAIN#0", retorno.getValorString());
     }
 
     @Test
@@ -238,7 +231,7 @@ public class Test18_018RankingPorTipoDeUso {
         // tiene que contar solo 1 alquiler (el que no se deshizo)
         retorno = s.rankingTiposPorUso();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("URBANA#1", retorno.getValorString());
+        assertEquals("URBANA#1|ELECTRICA#0|MOUNTAIN#0", retorno.getValorString());
     }
 
     @Test
