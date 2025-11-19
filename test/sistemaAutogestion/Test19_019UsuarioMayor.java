@@ -1,17 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package sistemaAutogestion;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @author clarahardoy
- */
 public class Test19_019UsuarioMayor {
     
 
@@ -23,7 +16,6 @@ public class Test19_019UsuarioMayor {
         s.crearSistemaDeGestion();
     }
 
-    // OK 
 
     @Test
     public void usuarioMayorOk_SinUsuarios() {

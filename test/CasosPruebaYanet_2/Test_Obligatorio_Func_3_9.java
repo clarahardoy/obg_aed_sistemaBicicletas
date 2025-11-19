@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package CasosPruebaYanet_2;
 
 import static org.junit.Assert.assertEquals;
@@ -11,10 +8,6 @@ import sistemaAutogestion.IObligatorio;
 import sistemaAutogestion.Retorno;
 import sistemaAutogestion.Sistema;
 
-/**
- *
- * @author yanete
- */
 public class Test_Obligatorio_Func_3_9 {
     private IObligatorio s;
 
@@ -25,82 +18,111 @@ public class Test_Obligatorio_Func_3_9 {
     }
 
     @Test
-       public void error1_NombreNullOVacio() {
-           Retorno r;
+    public void error1_parametroNullOVacio() {
+        Retorno r;
 
-           r = s.usuariosEnEspera(null);
-           assertEquals(Retorno.Resultado.ERROR_1, r.getResultado());
+        r = s.usuariosEnEspera(null);
+        assertEquals(Retorno.Resultado.ERROR_1, r.getResultado());
 
-           r = s.usuariosEnEspera("");
-           assertEquals(Retorno.Resultado.ERROR_1, r.getResultado());
+        r = s.usuariosEnEspera("");
+        assertEquals(Retorno.Resultado.ERROR_1, r.getResultado());
 
-           r = s.usuariosEnEspera("   ");
-           assertEquals(Retorno.Resultado.ERROR_1, r.getResultado());
-       }
-
-       @Test
-       public void error2_EstacionInexistente() {
-           Retorno r = s.usuariosEnEspera("NoExiste");
-           assertEquals(Retorno.Resultado.ERROR_2, r.getResultado());
-       }
-
-       @Test
-       public void ok_EstacionSinCola_RetornaVacio() {
-           assertEquals(Retorno.Resultado.OK, s.registrarEstacion("E1", "Centro", 3).getResultado());
-
-           Retorno r = s.usuariosEnEspera("E1");
-           assertEquals(Retorno.Resultado.OK, r.getResultado());
-           assertEquals("", r.getValorString());
-       }
-
-       @Test
-       public void ok_OrdenFIFO_y_TrimNombre() {
-           // Estación sin bicis -> todos los alquileres irán a la cola de espera
-           assertEquals(Retorno.Resultado.OK, s.registrarEstacion("E1", "Centro", 5).getResultado());
-
-           String c1 = String.format("%08d", 10000000 + 1);
-           String c2 = String.format("%08d", 10000000 + 2);
-           String c3 = String.format("%08d", 10000000 + 3);
-
-           assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c1, "Ana").getResultado());
-           assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c2, "Beto").getResultado());
-           assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c3, "Caro").getResultado());
-
-           // Todos piden bici en E1 sin stock -> quedan encolados en ese orden
-           assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c1, "E1").getResultado());
-           assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c2, "E1").getResultado());
-           assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c3, "E1").getResultado());
-
-           // Llamamos con espacios para verificar normalización
-           Retorno r = s.usuariosEnEspera("  E1  ");
-           assertEquals(Retorno.Resultado.OK, r.getResultado());
-           assertEquals(c1 + "|" + c2 + "|" + c3, r.getValorString());
-       }
-
-       @Test
-       public void ok_ColaMixta_SeListaSoloQuienesEsperan() {
-           // Preparamos escenario: dos usuarios en cola
-           assertEquals(Retorno.Resultado.OK, s.registrarEstacion("E1", "Centro", 2).getResultado());
-
-           String c1 = String.format("%08d", 10000000 + 21);
-           String c2 = String.format("%08d", 10000000 + 22);
-           String c3 = String.format("%08d", 10000000 + 23);
-
-           assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c1, "U1").getResultado());
-           assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c2, "U2").getResultado());
-           assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c3, "U3").getResultado());
-
-           // Encolamos 2 usuarios (no hay bicis)
-           assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c1, "E1").getResultado());
-           assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c2, "E1").getResultado());
-
-           // Listado debe contener sólo los que esperan
-           Retorno r = s.usuariosEnEspera("E1");
-           assertEquals(Retorno.Resultado.OK, r.getResultado());
-           assertEquals(c1 + "|" + c2, r.getValorString());
-
-           // Aun si hay un tercero que no pidió, no aparece
-           Retorno rAgain = s.usuariosEnEspera("E1");
-           assertEquals(c1 + "|" + c2, rAgain.getValorString());
-       }
+        r = s.usuariosEnEspera("   ");
+        assertEquals(Retorno.Resultado.ERROR_1, r.getResultado());
     }
+
+    @Test
+    public void error2_estacionInexistente() {
+        Retorno r = s.usuariosEnEspera("NoExiste");
+        assertEquals(Retorno.Resultado.ERROR_2, r.getResultado());
+    }
+
+    // ---------- OK: SIN ESPERA ----------
+
+    @Test
+    public void ok_estacionSinCola_devuelveVacio() {
+        // estación válida sin bicis ni usuarios esperando
+        assertEquals(Retorno.Resultado.OK, s.registrarEstacion("E1", "Centro", 3).getResultado());
+
+        Retorno r = s.usuariosEnEspera("E1");
+        assertEquals(Retorno.Resultado.OK, r.getResultado());
+        assertEquals("", r.getValorString());
+    }
+
+    // ---------- OK: FIFO Y TRIM ----------
+
+    @Test
+    public void ok_fifo_yTrimNombre() {
+        // Estación sin bicis -> todos los alquileres quedarán en cola
+        assertEquals(Retorno.Resultado.OK, s.registrarEstacion("E1", "Centro", 5).getResultado());
+
+        String c1 = "10000001";
+        String c2 = "10000002";
+        String c3 = "10000003";
+
+        assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c1, "Ana").getResultado());
+        assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c2, "Beto").getResultado());
+        assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c3, "Caro").getResultado());
+
+        // Como no hay bicis ancladas, todos quedan esperando en ese orden
+        assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c1, "E1").getResultado());
+        assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c2, "E1").getResultado());
+        assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c3, "E1").getResultado());
+
+        // Llamamos con espacios para validar el trim
+        Retorno r = s.usuariosEnEspera("   E1   ");
+        assertEquals(Retorno.Resultado.OK, r.getResultado());
+        assertEquals(c1 + "|" + c2 + "|" + c3, r.getValorString());
+    }
+
+    // ---------- OK: NO CONSUME COLA (idempotente) ----------
+
+    @Test
+    public void ok_noConsumeCola_llamadasRepetidas() {
+        assertEquals(Retorno.Resultado.OK, s.registrarEstacion("E2", "Centro", 2).getResultado());
+
+        String c1 = "20000001";
+        String c2 = "20000002";
+        String c3 = "20000003";
+
+        assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c1, "U1").getResultado());
+        assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c2, "U2").getResultado());
+        assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c3, "U3").getResultado());
+
+        assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c1, "E2").getResultado());
+        assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c2, "E2").getResultado());
+
+        Retorno r1 = s.usuariosEnEspera("E2");
+        assertEquals(Retorno.Resultado.OK, r1.getResultado());
+        assertEquals(c1 + "|" + c2, r1.getValorString());
+
+        // Segunda llamada debe dar exactamente lo mismo
+        Retorno r2 = s.usuariosEnEspera("E2");
+        assertEquals(Retorno.Resultado.OK, r2.getResultado());
+        assertEquals(c1 + "|" + c2, r2.getValorString());
+    }
+
+    // ---------- OK: SOLO LOS QUE ESTÁN EN COLA ----------
+
+    @Test
+    public void ok_soloQuienesEsperan_noIncluyeNoEncolados() {
+        assertEquals(Retorno.Resultado.OK, s.registrarEstacion("E3", "Centro", 3).getResultado());
+
+        String c1 = "30000001";
+        String c2 = "30000002";
+        String c3 = "30000003"; // no pedirá bici
+
+        assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c1, "U1").getResultado());
+        assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c2, "U2").getResultado());
+        assertEquals(Retorno.Resultado.OK, s.registrarUsuario(c3, "U3").getResultado());
+
+        // Solo dos piden bici (no hay bicis, así que quedan en cola)
+        assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c1, "E3").getResultado());
+        assertEquals(Retorno.Resultado.OK, s.alquilarBicicleta(c2, "E3").getResultado());
+
+        Retorno r = s.usuariosEnEspera("E3");
+        assertEquals(Retorno.Resultado.OK, r.getResultado());
+        assertEquals(c1 + "|" + c2, r.getValorString());
+    }
+}
+    

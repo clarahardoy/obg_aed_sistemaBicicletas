@@ -155,5 +155,14 @@ public class ListaSE<T extends Comparable<T>> implements IListaSimple<T> {
         }
 
         cantidadElementos++;
-    }      
-}
+    }   
+    
+
+    public int longitud() {
+        return getCantidadElementos();
+    }
+
+    public T obtener(int indice) {
+        return obtenerElementoPorIndice(indice);
+    }
+ }

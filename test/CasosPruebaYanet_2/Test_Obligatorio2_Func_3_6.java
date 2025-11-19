@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package CasosPruebaYanet_2;
 
 import static org.junit.Assert.assertEquals;
@@ -12,11 +9,6 @@ import sistemaAutogestion.IObligatorio;
 import sistemaAutogestion.Retorno;
 import sistemaAutogestion.Sistema;
 
-
-/**
- *
- * @author yanete
- */
 public class Test_Obligatorio2_Func_3_6 {
     
     private IObligatorio s;

@@ -973,46 +973,34 @@ public class Sistema implements IObligatorio {
     @Override
     public Retorno usuariosEnEspera(String nombreEstacion) {
         if (nombreEstacion == null) {
-            return Retorno.ok("");
+            return Retorno.error1();
         }
         nombreEstacion = nombreEstacion.trim();
         if (nombreEstacion.isEmpty()) {
-            return Retorno.ok("");
+            return Retorno.error1();
         }
 
-        // Buscar estación por nombre
-        Estacion est;
-        if (estaciones == null || estaciones.esVacia()) {
-            est = null;
-        } else {
+        Estacion est = null;
+        if (estaciones != null && !estaciones.esVacia()) {
             est = estaciones.obtenerElemento(new Estacion(nombreEstacion, "", 0));
         }
         if (est == null) {
-            return Retorno.ok("");
+            return Retorno.error2();
         }
 
-        // agarrar la cola de espera por alquiler
         tads.ColaSE<Usuario> cola = est.getColaEsperaAlquiler();
         if (cola == null || cola.esVacia()) {
+            // OK con vacío si no hay nadie esperando
             return Retorno.ok("");
         }
 
-        //se recorre y se agrega en la aux sin perder el orden
-        //para listar hay que desencolar para leer los elementos y se guardan en la aux
-        
         tads.ColaSE<Usuario> aux = new tads.ColaSE<>();
         String resultado = "";
 
         while (!cola.esVacia()) {
             Usuario u = cola.desencolar();
             if (u != null) {
-                String ci;
-                if (u.getCedula() == null) {
-                    ci = "";
-                } else {
-                    ci = u.getCedula().trim();
-                }
-
+                String ci = (u.getCedula() == null) ? "" : u.getCedula().trim();
                 if (!ci.isEmpty()) {
                     if (resultado.isEmpty()) {
                         resultado = ci;
@@ -1020,12 +1008,10 @@ public class Sistema implements IObligatorio {
                         resultado = resultado + "|" + ci;
                     }
                 }
-
-                aux.encolar(u); 
+                aux.encolar(u);
             }
         }
 
-        //despues se retaura la aux y queda en el mismo orden que estaba
         while (!aux.esVacia()) {
             cola.encolar(aux.desencolar());
         }
@@ -1033,63 +1019,73 @@ public class Sistema implements IObligatorio {
         return Retorno.ok(resultado);
     }
 
-    @Override
+  @Override
     public Retorno usuarioMayor() {
-        PilaSE<Alquiler> pilaAux = new PilaSE<>();
-       
-        int cantUsuarios = usuarios.getCantidadElementos();
-        int[] contadorDeUsuario = new int[cantUsuarios];
-        
-        while (!pilaUltimosAlquileres.esVacia()) {
-            
-            Alquiler alquiler = pilaUltimosAlquileres.desapilar();
-            pilaAux.apilar(alquiler);
+        if (usuarios == null || usuarios.esVacia()) {
+            return Retorno.ok("");
+        }
 
-            if (alquiler != null && alquiler.getUsuario() != null) {
-                
-                // buscar indice del usuario en la lista
-                for (int i = 0; i < cantUsuarios; i++) {
-                    Usuario usuario = usuarios.obtenerElementoPorIndice(i);
-                    
-                    if (usuario != null && usuario.equals(alquiler.getUsuario())) {
-                        contadorDeUsuario[i]++;
-                        break;
+        int n = usuarios.getCantidadElementos();
+        int[] conteo = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            Usuario u = usuarios.obtenerElementoPorIndice(i);
+            conteo[i] = (u == null) ? 0 : u.getCantAlquileres();
+        }
+
+        PilaSE<Alquiler> aux = new PilaSE<>();
+        if (pilaUltimosAlquileres != null) {
+            while (!pilaUltimosAlquileres.esVacia()) {
+                Alquiler alq = pilaUltimosAlquileres.desapilar();
+                aux.apilar(alq);
+
+                if (alq != null && alq.getUsuario() != null) {
+                    Usuario uAlq = alq.getUsuario();
+                    for (int i = 0; i < n; i++) {
+                        Usuario u = usuarios.obtenerElementoPorIndice(i);
+                        if (u != null && u.equals(uAlq)) {
+                            conteo[i] = conteo[i] + 1;
+                            break;
+                        }
                     }
                 }
             }
+            while (!aux.esVacia()) {
+                pilaUltimosAlquileres.apilar(aux.desapilar());
+            }
         }
-        
-        // restaurar pila original
-        while (!pilaAux.esVacia()) {
-            pilaUltimosAlquileres.apilar(pilaAux.desapilar());
-        }
-        
-        int mayorCantAlquileres = 0;
-        Usuario usuarioGanador = null;
-         
-        for (int i = 0; i < cantUsuarios; i++) {
-            if (contadorDeUsuario[i] > mayorCantAlquileres) {
-                mayorCantAlquileres = contadorDeUsuario[i];
-                usuarioGanador = usuarios.obtenerElementoPorIndice(i);
-            } 
-            
-            //si la cantidad de alquileres del usuario pasando por el FOR es igual al que actualmente tiene mas alquileres
-            //gana el que tiene la cedula mas chica
-            else if (contadorDeUsuario[i] == mayorCantAlquileres && contadorDeUsuario[i] > 0) {
-                
-                Usuario actual = usuarios.obtenerElementoPorIndice(i);
-                if (actual != null && usuarioGanador != null) {
-                    if (actual.getCedula().compareTo(usuarioGanador.getCedula()) < 0) {
-                        usuarioGanador = actual;
-                    }
+
+        int max = -1;
+        Usuario ganador = null;
+
+        for (int i = 0; i < n; i++) {
+            Usuario u = usuarios.obtenerElementoPorIndice(i);
+            int c = conteo[i];
+
+            if (ganador == null || c > max) {
+                ganador = u;
+                max = c;
+            } else if (c == max) {
+                String ciU = (u.getCedula() == null) ? "" : u.getCedula().trim();
+                String ciG = (ganador.getCedula() == null) ? "" : ganador.getCedula().trim();
+                if (ciU.compareTo(ciG) < 0) {
+                    ganador = u;
                 }
             }
         }
-        
-         // si no se encontró ningún usuario con alquileres
-          if (usuarioGanador == null || mayorCantAlquileres == 0)  return Retorno.ok("");
-          
-          // si no, retorno el ganador
-          return Retorno.ok(usuarioGanador.getCedula());
+
+        if (max <= 0) {
+            String menor = null;
+            for (int i = 0; i < n; i++) {
+                Usuario u = usuarios.obtenerElementoPorIndice(i);
+                String ci = (u == null || u.getCedula() == null) ? "" : u.getCedula().trim();
+                if (menor == null || ci.compareTo(menor) < 0) {
+                    menor = ci;
+                }
+            }
+            return Retorno.ok(menor == null ? "" : menor);
         }
+
+        return Retorno.ok(ganador == null ? "" : ganador.getCedula());
     }
+}
