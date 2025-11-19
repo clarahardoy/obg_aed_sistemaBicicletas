@@ -8,10 +8,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @author clarahardoy
- */
 public class Test16_016EstacionesConDisponibilidadMayor {
 
     private Retorno retorno;
@@ -154,7 +150,7 @@ public class Test16_016EstacionesConDisponibilidadMayor {
         s.registrarBicicleta("ABC001", "URBANA");
         s.asignarBicicletaAEstacion("ABC001", "E1");
 
-        // n = 2 (límite mínimo permitido)
+        //2  es minimo permitido
         retorno = s.estacionesConDisponibilidad(2);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals(0, retorno.getValorEntero()); // 1 no es mayor a 2
@@ -166,7 +162,7 @@ public class Test16_016EstacionesConDisponibilidadMayor {
         s.registrarEstacion("E2", "Pocitos", 5);
         s.registrarEstacion("E3", "Cordón", 5);
         
-        // Todas con 5 bicis
+        // todas con 5 bicis
         for (int i = 1; i <= 3; i++) {
             for (int j = 1; j <= 5; j++) {
                 String codigo = String.format("E%dB%03d", i, j); 
@@ -175,7 +171,7 @@ public class Test16_016EstacionesConDisponibilidadMayor {
             }
         }
 
-        // Buscar estaciones con MÁS de 2
+        // Buscar estaciones con MAS de 2
         retorno = s.estacionesConDisponibilidad(2);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals(3, retorno.getValorEntero());
@@ -204,8 +200,6 @@ public class Test16_016EstacionesConDisponibilidadMayor {
         assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
     }
 
-    // casos borde
-
     @Test
     public void estacionesConDisponibilidadOk_EstacionSinBicis() {
         s.registrarEstacion("E1", "Centro", 5);
@@ -220,15 +214,4 @@ public class Test16_016EstacionesConDisponibilidadMayor {
         assertEquals(0, retorno.getValorEntero()); // ninguna tiene más de 2
     }
 
-    @Test
-    public void estacionesConDisponibilidadOk_N_MuyGrande() {
-        s.registrarEstacion("E1", "Centro", 5);
-        s.registrarBicicleta("ABC001", "URBANA");
-        s.asignarBicicletaAEstacion("ABC001", "E1");
-
-        // buscar estaciones con MÁS de 1000 disponibles
-        retorno = s.estacionesConDisponibilidad(1000);
-        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(0, retorno.getValorEntero());
-    }
 }

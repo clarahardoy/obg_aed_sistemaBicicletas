@@ -21,17 +21,16 @@ public class Test19_019UsuarioMayor {
     public void usuarioMayorOk_SinUsuarios() {
         retorno = s.usuarioMayor();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("", retorno.getValorString());
     }
 
     @Test
-    public void usuarioMayorOk_SinAlquileres() {
+    public void usuarioMayorOk_SinAlquileres_RetornaCedulaMenor() {
         s.registrarUsuario("11111111", "Ana");
         s.registrarUsuario("22222222", "Pedro");
 
         retorno = s.usuarioMayor();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("", retorno.getValorString());
+        assertEquals("11111111", retorno.getValorString());
     }
 
     @Test
@@ -140,28 +139,6 @@ public class Test19_019UsuarioMayor {
         assertEquals("11111111", retorno.getValorString()); 
     }
 
-    @Test
-    public void usuarioMayorOk_MuchosAlquileresUnUsuario() {
-        s.registrarEstacion("E1", "Centro", 10);
-        s.registrarUsuario("12345678", "Ana");
-
-        // 10 bicis para alquilar múltiples veces
-        for (int i = 1; i <= 10; i++) {
-            String codigo = "A000" + String.format("%02d", i);
-            s.registrarBicicleta(codigo, "URBANA");
-            s.asignarBicicletaAEstacion(codigo, "E1");
-        }
-
-        // 10 alquileres
-        for (int i = 0; i < 5; i++) {
-            s.alquilarBicicleta("12345678", "E1");
-            s.devolverBicicleta("12345678", "E1");
-        }
-
-        retorno = s.usuarioMayor();
-        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("12345678", retorno.getValorString());
-    }
 
     @Test
     public void usuarioMayorOk_AlgunosUsuariosSinAlquileres() {

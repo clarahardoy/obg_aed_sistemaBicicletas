@@ -177,10 +177,10 @@ public class Test21_021ListarBicisDeEstacion {
         s.marcarEnMantenimiento("A00001", "rueda");
         s.marcarEnMantenimiento("A00002", "frenos");
 
-        // E1 deberia estar vacia (bicis fueron al depósito)
+        // E1 deberia estar vacia (bicis fueron al deposito)
         retorno = s.listarBicicletasDeEstacion("E1");
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("", retorno.getValorString()); // ✅ Vacío
+        assertEquals("", retorno.getValorString()); 
 
         Retorno deposito = s.listarBicisEnDeposito();
         assertTrue(deposito.getValorString().contains("A00001"));

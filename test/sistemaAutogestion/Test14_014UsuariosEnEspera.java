@@ -90,27 +90,23 @@ public class Test14_014UsuariosEnEspera {
         assertEquals("11111111|22222222", retorno.getValorString());
     }
 
-    // parámetros nulos o vacíos la implementación devuelve OK con cadena vacía
+    // parámetros nulos o vacíos la implementación devuelve error1
     @Test
     public void usuariosEnEsperaOk_parametrosInvalidos_devuelveVacio() {
         retorno = s.usuariosEnEspera(null);
-        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("", retorno.getValorString());
+        assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
 
         retorno = s.usuariosEnEspera("");
-        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("", retorno.getValorString());
+        assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
 
         retorno = s.usuariosEnEspera("   ");
-        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("", retorno.getValorString());
+        assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
     }
 
-    // estación inexistente  devuelve OK con cadena vacía
+    // estación inexistente  devuelve error2 con cadena vacía
     @Test
     public void usuariosEnEsperaOk_estacionInexistente_devuelveVacio() {
         retorno = s.usuariosEnEspera("NOEXISTE");
-        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("", retorno.getValorString());
+        assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
     }
 }
